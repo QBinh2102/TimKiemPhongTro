@@ -35,7 +35,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'phongtros.apps.PhongtrosConfig'
+    'phongtros.apps.PhongtrosConfig',
+    'rest_framework',
+    'vi_address',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +84,7 @@ DATABASES = {
 }
 
 import pymysql
+
 pymysql.install_as_MySQLdb()
 
 AUTH_USER_MODEL = 'phongtros.User'
