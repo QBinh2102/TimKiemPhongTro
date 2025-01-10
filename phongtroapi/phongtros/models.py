@@ -5,21 +5,26 @@ from vi_address.models import City, District, Ward
 from enum import IntEnum
 
 class VaiTro(IntEnum):
-    QUANTRIVIEN = 1
-    CHUNHATRO = 2
-    NGUOITHUETRO = 3
+    CHUNHATRO = 1
+    NGUOITHUETRO = 2
 
     @classmethod
     def choices(cls):
         return [(key.value, key.name) for key in cls]
 
 class User(AbstractUser):
-    SDT = models.SmallIntegerField(null=True)
-    vaiTro = models.IntegerField(choices=VaiTro.choices(),default=VaiTro.QUANTRIVIEN)
+    SDT = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name_plural = 'Admin'
 
 class NguoiDung(User):
-    avatar = models.ImageField(upload_to='nguoidungs/%Y/%m')
+    image = models.ImageField(upload_to='nguoidungs/%Y/%m')
+    vaiTro = models.IntegerField(choices=VaiTro.choices(), default=VaiTro.NGUOITHUETRO)
     tuongTac = models.ManyToManyField("self")
+
+    class Meta:
+        verbose_name_plural = 'Người dùng'
 
 class BaseModel(models.Model):
     active = models.BooleanField(default=True)
@@ -49,13 +54,22 @@ class Tro(BaseModel):
     def __str__(self):
         return self.tenTro
 
+    class Meta:
+        verbose_name_plural = 'Trọ'
+
 class BaiDang(BaseModel):
     updated_date = models.DateTimeField(auto_now=True)
     thongTin = models.CharField(max_length=255)
     nguoiDangBai = models.ForeignKey(NguoiDung, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name_plural = 'Bài đăng'
+
 class BaiDangChoThue(BaiDang):
     troChoThue = models.ForeignKey(Tro, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Bài đăng cho thuê'
 
 class BinhLuan(BaseModel):
     thongTin = models.CharField(max_length=255)
