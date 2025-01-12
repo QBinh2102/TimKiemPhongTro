@@ -31,7 +31,7 @@ class BaseModel(models.Model):
         abstract = True
 
 class AnhTro(models.Model):
-    tro = models.ForeignKey('Tro', on_delete=models.CASCADE)
+    tro = models.ForeignKey('Tro', on_delete=models.CASCADE,related_name='anh_tros')
     anh = models.ImageField(upload_to='phongtros/%Y/%m/')
 
     def __str__(self):

@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import User, VaiTro, Tro, AnhTro, BaiDang, BaiDangChoThue, BinhLuan, Chat, ChatText, ChatAnh
-from vi_address.models import City, District, Ward
+from .models import User, Tro, AnhTro, BaiDang, BaiDangChoThue, BinhLuan, Chat, ChatText, ChatAnh
 
 # Serializer cho User
 class UserSerializer(serializers.ModelSerializer):
@@ -8,29 +7,24 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'SDT', 'image', 'vaiTro', 'tuongTac']
 
-
-class VaiTroSerializer(serializers.Serializer):
-    value = serializers.IntegerField()
-    name = serializers.CharField()
-
-    def to_representation(self, instance):
-        return {
-            'value': instance.value,
-            'name': instance.name
-        }
-
 # Serializer cho Tro
 class TroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tro
         fields = ['id', 'tenTro', 'thanh_pho', 'quan', 'phuong', 'diaChi', 'nguoiChoThue', 'gia', 'soNguoiO']
 
-
 # Serializer cho AnhTro
 class AnhTroSerializer(serializers.ModelSerializer):
     class Meta:
         model = AnhTro
         fields = ['id', 'tro', 'anh']
+
+class TroDetailsSerializer(TroSerializer):
+    anh_tros =AnhTroSerializer(many=True)
+
+    class Meta:
+        model = TroSerializer.Meta.model
+        fields = TroSerializer.Meta.fields + ['anh_tros']
 
 
 # Serializer cho BaiDang
