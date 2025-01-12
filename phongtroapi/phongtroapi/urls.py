@@ -18,7 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 from phongtros.admin import admin_site
 
+
 urlpatterns = [
     path('admin/', admin_site.urls),
     path('api/address/', include('vi_address.urls')),
+    path('', include('phongtros.urls')),
 ]
