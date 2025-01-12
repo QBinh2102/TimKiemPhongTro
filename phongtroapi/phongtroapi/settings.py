@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'phongtros.apps.PhongtrosConfig',
     'rest_framework',
     'vi_address',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
