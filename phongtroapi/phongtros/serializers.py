@@ -1,14 +1,24 @@
 from rest_framework import serializers
 from .models import User, Tro, AnhTro, BaiDang, BaiDangChoThue, BinhLuan, Chat, ChatText, ChatAnh
 
-# Serializer cho User
 class UserSerializer(serializers.ModelSerializer):
+    # Sử dụng serializer lồng nhau
+    tuongTac = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=User.objects.all()
+    )
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'SDT', 'image', 'vaiTro', 'tuongTac']
+        fields = ['id','email', 'username', 'first_name', 'last_name', 'SDT', 'image', 'vaiTro', 'tuongTac']
+
+class User2(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','email', 'username', 'first_name', 'last_name', 'SDT']
+
 
 # Serializer cho Tro
 class TroSerializer(serializers.ModelSerializer):
+    nguoiChoThue = User2()
     class Meta:
         model = Tro
         fields = ['id', 'tenTro', 'thanh_pho', 'quan', 'phuong', 'diaChi', 'nguoiChoThue', 'gia', 'soNguoiO']
@@ -29,10 +39,10 @@ class TroDetailsSerializer(TroSerializer):
 
 # Serializer cho BaiDang
 class BaiDangSerializer(serializers.ModelSerializer):
+    nguoiDangBai = User2()
     class Meta:
         model = BaiDang
         fields = ['id', 'tieuDe', 'thongTin', 'nguoiDangBai', 'created_date', 'updated_date']
-
 
 # Serializer cho BaiDangChoThue ( kế thừa BaiDang)
 class BaiDangChoThueSerializer(BaiDangSerializer):
