@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from ckeditor_demo.settings import CKEDITOR_UPLOAD_PATH
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'vi_address',
     'drf_yasg',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -91,6 +95,7 @@ pymysql.install_as_MySQLdb()
 AUTH_USER_MODEL = 'phongtros.User'
 
 MEDIA_ROOT = '%s/phongtros/static/' % BASE_DIR
+CKEDITOR_UPLOAD_PATH = 'baidangs/'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

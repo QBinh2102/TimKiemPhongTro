@@ -1,16 +1,34 @@
+from tempfile import template
+
 from django import forms
-from django.contrib import admin, messages
-from django.core.exceptions import ValidationError
+from django.contrib import admin
+from django.template.response import TemplateResponse
+
 from phongtros.models import User, Tro, BaiDang, BaiDangChoThue, City, District, Ward, VaiTro, AnhTro, BinhLuan
 from django.utils.html import mark_safe
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django.urls import path
 
 
-class MyCourseAdmin(admin.AdminSite):
+class MyTroAdmin(admin.AdminSite):
     site_header = 'Hệ thống tìm phòng trọ'
+
+    def get_urls(self):
+        return [
+            path('tro-stats/', self.tro_stats)
+        ] + super().get_urls()
+
+    def tro_stats(self, request):
+        user_count = User.objects.count()
+
+        return TemplateResponse(request, 'admin/tro-stats.html', {
+            'user_count' : user_count
+        })
+
 
 class UserAdmin(admin.ModelAdmin):
     # Chỉ hiển thị trường 'username' và 'password'
-    fields = ('username', 'password', 'email', 'first_name', 'last_name', 'SDT', 'vaiTro', 'image', 'avatar')
+    fields = ('username', 'password', 'email', 'first_name', 'last_name', 'SDT', 'vaiTro', 'image', 'avatar','date_joined')
     list_display = ['username', 'email', 'SDT']
     search_fields = ['username']
     readonly_fields = ['avatar']
@@ -30,17 +48,6 @@ class UserAdmin(admin.ModelAdmin):
             obj.is_active = True
             obj.set_password(form.cleaned_data['password'])
         super().save_model(request, obj, form, change)  # Gọi phương thức lưu của lớp cha
-
-class TroForm(forms.ModelForm):
-    class Meta:
-        model = Tro
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Lọc người dùng có vai trò là CHUNHATRO
-        self.fields['nguoiChoThue'].queryset = User.objects.filter(vaiTro=VaiTro.CHUNHATRO)
-
 
 class CustomAnhTroInline(admin.TabularInline):
     model = AnhTro
@@ -68,11 +75,11 @@ class CustomAnhTroInline(admin.TabularInline):
         return qs
 
 class TroAdmin(admin.ModelAdmin):
-    form = TroForm
     inlines = [CustomAnhTroInline]
     list_display = ['tenTro', 'diaChi', 'phuong', 'quan', 'thanh_pho', 'soNguoiO', 'gia', 'nguoiChoThue', 'active']
     search_fields = ['tenTro']
     list_filter = ['gia']
+    readonly_fields = ['tenTro', 'diaChi', 'phuong', 'quan', 'thanh_pho', 'soNguoiO', 'gia', 'nguoiChoThue']
 
     def has_add_permission(self, request):
         return False
@@ -90,6 +97,8 @@ class CustomBinhLuanInline(admin.TabularInline):
         return bl
 
 class BaiDangForm(forms.ModelForm):
+    thongTin = forms.CharField(widget=CKEditorUploadingWidget)
+
     class Meta:
         model = BaiDang
         fields = '__all__'
@@ -131,7 +140,7 @@ class BaiDangChoThueAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-admin_site = MyCourseAdmin()
+admin_site = MyTroAdmin()
 
 admin_site.register(User,UserAdmin)
 # admin_site.register(AnhTro)

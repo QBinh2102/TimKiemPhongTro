@@ -117,7 +117,7 @@ CREATE TABLE `django_admin_log` (
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_phongtros_user_id` FOREIGN KEY (`user_id`) REFERENCES `phongtros_user` (`id`),
   CONSTRAINT `django_admin_log_chk_1` CHECK ((`action_flag` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +126,7 @@ CREATE TABLE `django_admin_log` (
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
-INSERT INTO `django_admin_log` VALUES (1,'2025-01-11 15:27:39.454061','2','binh',1,'[{\"added\": {}}]',7,1),(2,'2025-01-11 15:27:58.684005','3','sang',1,'[{\"added\": {}}]',7,1),(3,'2025-01-11 15:28:38.997970','1','hi',1,'[{\"added\": {}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}]',12,1),(4,'2025-01-11 15:28:51.919856','1','HIện có trọ giá rẻ',1,'[{\"added\": {}}]',14,1),(5,'2025-01-11 15:29:23.047771','1','BinhLuan object (1)',1,'[{\"added\": {}}]',9,1),(6,'2025-01-11 15:30:08.807240','2','Tìm trọ giá rẻ',1,'[{\"added\": {}}]',8,1),(7,'2025-01-11 15:31:54.243211','2','Tìm trọ giá rẻ',2,'[]',8,1),(8,'2025-01-11 15:38:28.013663','1','hi',2,'[{\"changed\": {\"fields\": [\"Active\"]}}]',12,1),(9,'2025-01-11 15:39:07.013381','1','hi',2,'[{\"changed\": {\"fields\": [\"Active\"]}}]',12,1);
+INSERT INTO `django_admin_log` VALUES (1,'2025-01-11 15:27:39.454061','2','binh',1,'[{\"added\": {}}]',7,1),(2,'2025-01-11 15:27:58.684005','3','sang',1,'[{\"added\": {}}]',7,1),(3,'2025-01-11 15:28:38.997970','1','hi',1,'[{\"added\": {}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}]',12,1),(4,'2025-01-11 15:28:51.919856','1','HIện có trọ giá rẻ',1,'[{\"added\": {}}]',14,1),(5,'2025-01-11 15:29:23.047771','1','BinhLuan object (1)',1,'[{\"added\": {}}]',9,1),(6,'2025-01-11 15:30:08.807240','2','Tìm trọ giá rẻ',1,'[{\"added\": {}}]',8,1),(7,'2025-01-11 15:31:54.243211','2','Tìm trọ giá rẻ',2,'[]',8,1),(8,'2025-01-11 15:38:28.013663','1','hi',2,'[{\"changed\": {\"fields\": [\"Active\"]}}]',12,1),(9,'2025-01-11 15:39:07.013381','1','hi',2,'[{\"changed\": {\"fields\": [\"Active\"]}}]',12,1),(10,'2025-01-12 15:47:20.169531','1','HIện có trọ giá rẻ',2,'[{\"changed\": {\"fields\": [\"ThongTin\"]}}]',14,1),(11,'2025-01-12 15:47:31.885411','1','HIện có trọ giá rẻ',2,'[{\"changed\": {\"fields\": [\"ThongTin\"]}}]',14,1),(12,'2025-01-12 15:47:36.464551','1','HIện có trọ giá rẻ',2,'[]',14,1),(13,'2025-01-12 16:12:11.413063','1','hi',2,'[]',12,1),(14,'2025-01-12 16:12:16.277578','1','hi',2,'[]',12,1),(15,'2025-01-13 12:29:36.086595','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(16,'2025-01-13 12:34:07.636635','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(17,'2025-01-13 12:35:16.559762','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(18,'2025-01-13 13:18:09.587560','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(19,'2025-01-13 13:37:49.423250','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(20,'2025-01-13 13:50:56.703503','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1);
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,7 +169,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +178,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'vi_address','0001_initial','2025-01-11 15:25:19.214100'),(2,'contenttypes','0001_initial','2025-01-11 15:25:19.247739'),(3,'contenttypes','0002_remove_content_type_name','2025-01-11 15:25:19.311223'),(4,'auth','0001_initial','2025-01-11 15:25:19.510038'),(5,'auth','0002_alter_permission_name_max_length','2025-01-11 15:25:19.561854'),(6,'auth','0003_alter_user_email_max_length','2025-01-11 15:25:19.566535'),(7,'auth','0004_alter_user_username_opts','2025-01-11 15:25:19.571037'),(8,'auth','0005_alter_user_last_login_null','2025-01-11 15:25:19.575733'),(9,'auth','0006_require_contenttypes_0002','2025-01-11 15:25:19.577978'),(10,'auth','0007_alter_validators_add_error_messages','2025-01-11 15:25:19.586113'),(11,'auth','0008_alter_user_username_max_length','2025-01-11 15:25:19.590738'),(12,'auth','0009_alter_user_last_name_max_length','2025-01-11 15:25:19.595564'),(13,'auth','0010_alter_group_name_max_length','2025-01-11 15:25:19.606418'),(14,'auth','0011_update_proxy_permissions','2025-01-11 15:25:19.612941'),(15,'auth','0012_alter_user_first_name_max_length','2025-01-11 15:25:19.618278'),(16,'phongtros','0001_initial','2025-01-11 15:25:20.774741'),(17,'admin','0001_initial','2025-01-11 15:25:20.898807'),(18,'admin','0002_logentry_remove_auto_add','2025-01-11 15:25:20.908107'),(19,'admin','0003_logentry_add_action_flag_choices','2025-01-11 15:25:20.918416'),(20,'sessions','0001_initial','2025-01-11 15:25:20.950193');
+INSERT INTO `django_migrations` VALUES (1,'vi_address','0001_initial','2025-01-11 15:25:19.214100'),(2,'contenttypes','0001_initial','2025-01-11 15:25:19.247739'),(3,'contenttypes','0002_remove_content_type_name','2025-01-11 15:25:19.311223'),(4,'auth','0001_initial','2025-01-11 15:25:19.510038'),(5,'auth','0002_alter_permission_name_max_length','2025-01-11 15:25:19.561854'),(6,'auth','0003_alter_user_email_max_length','2025-01-11 15:25:19.566535'),(7,'auth','0004_alter_user_username_opts','2025-01-11 15:25:19.571037'),(8,'auth','0005_alter_user_last_login_null','2025-01-11 15:25:19.575733'),(9,'auth','0006_require_contenttypes_0002','2025-01-11 15:25:19.577978'),(10,'auth','0007_alter_validators_add_error_messages','2025-01-11 15:25:19.586113'),(11,'auth','0008_alter_user_username_max_length','2025-01-11 15:25:19.590738'),(12,'auth','0009_alter_user_last_name_max_length','2025-01-11 15:25:19.595564'),(13,'auth','0010_alter_group_name_max_length','2025-01-11 15:25:19.606418'),(14,'auth','0011_update_proxy_permissions','2025-01-11 15:25:19.612941'),(15,'auth','0012_alter_user_first_name_max_length','2025-01-11 15:25:19.618278'),(16,'phongtros','0001_initial','2025-01-11 15:25:20.774741'),(17,'admin','0001_initial','2025-01-11 15:25:20.898807'),(18,'admin','0002_logentry_remove_auto_add','2025-01-11 15:25:20.908107'),(19,'admin','0003_logentry_add_action_flag_choices','2025-01-11 15:25:20.918416'),(20,'sessions','0001_initial','2025-01-11 15:25:20.950193'),(21,'phongtros','0002_alter_anhtro_tro','2025-01-12 15:04:54.145675'),(22,'phongtros','0003_alter_baidang_thongtin','2025-01-12 15:40:19.380598');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +262,7 @@ CREATE TABLE `phongtros_baidang` (
 
 LOCK TABLES `phongtros_baidang` WRITE;
 /*!40000 ALTER TABLE `phongtros_baidang` DISABLE KEYS */;
-INSERT INTO `phongtros_baidang` VALUES (1,1,'2025-01-11 15:28:51.918052','HIện có trọ giá rẻ','2025-01-11 15:28:51.918081','abc',2),(2,1,'2025-01-11 15:30:08.805917','Tìm trọ giá rẻ','2025-01-11 15:31:54.241346','abc',3);
+INSERT INTO `phongtros_baidang` VALUES (1,1,'2025-01-11 15:28:51.918052','HIện có trọ giá rẻ','2025-01-12 15:47:36.460999','<p>abcd<strong>&egrave;gAAAAA</strong><u>BBBBBB</u><em>CCCC<span style=\"color:#e67e22\">CCC</span></em></p>',2),(2,1,'2025-01-11 15:30:08.805917','Tìm trọ giá rẻ','2025-01-11 15:31:54.241346','abc',3);
 /*!40000 ALTER TABLE `phongtros_baidang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -346,7 +346,7 @@ CREATE TABLE `phongtros_chat` (
   KEY `phongtros_chat_nguoiNhan_id_e950f9f9_fk_phongtros_user_id` (`nguoiNhan_id`),
   CONSTRAINT `phongtros_chat_nguoiGui_id_34311817_fk_phongtros_user_id` FOREIGN KEY (`nguoiGui_id`) REFERENCES `phongtros_user` (`id`),
   CONSTRAINT `phongtros_chat_nguoiNhan_id_e950f9f9_fk_phongtros_user_id` FOREIGN KEY (`nguoiNhan_id`) REFERENCES `phongtros_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -355,6 +355,7 @@ CREATE TABLE `phongtros_chat` (
 
 LOCK TABLES `phongtros_chat` WRITE;
 /*!40000 ALTER TABLE `phongtros_chat` DISABLE KEYS */;
+INSERT INTO `phongtros_chat` VALUES (1,1,'2025-01-12 14:47:56.750555','2025-01-12 14:47:56.750606',1,2,3),(2,1,'2025-01-12 14:48:31.920201','2025-01-12 14:48:31.920239',1,3,2);
 /*!40000 ALTER TABLE `phongtros_chat` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -379,6 +380,7 @@ CREATE TABLE `phongtros_chatanh` (
 
 LOCK TABLES `phongtros_chatanh` WRITE;
 /*!40000 ALTER TABLE `phongtros_chatanh` DISABLE KEYS */;
+INSERT INTO `phongtros_chatanh` VALUES (2,'chats/2025/01/anh5.png');
 /*!40000 ALTER TABLE `phongtros_chatanh` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -403,6 +405,7 @@ CREATE TABLE `phongtros_chattext` (
 
 LOCK TABLES `phongtros_chattext` WRITE;
 /*!40000 ALTER TABLE `phongtros_chattext` DISABLE KEYS */;
+INSERT INTO `phongtros_chattext` VALUES (1,'Hi');
 /*!40000 ALTER TABLE `phongtros_chattext` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -481,7 +484,7 @@ CREATE TABLE `phongtros_user` (
 
 LOCK TABLES `phongtros_user` WRITE;
 /*!40000 ALTER TABLE `phongtros_user` DISABLE KEYS */;
-INSERT INTO `phongtros_user` VALUES (1,'pbkdf2_sha256$870000$WKKxxZ4ijWAT5uSfplBTSk$I+4HoMqwhgyb28y6gjguUtn+ukAk27ou4DXegJjOQ/g=','2025-01-11 15:26:46.110105',1,'admin','','','admin@gmail.com',1,1,'2025-01-11 15:26:30.996038','','',1),(2,'pbkdf2_sha256$870000$TwkS4mzqtctYk7TVBNrTdN$0B4bC/OdWduqN1pcbeOw2TU/8PxQEqusL/WZ+NJ0Dhs=',NULL,0,'binh','Binh','To Quoc','toquocbinh2102@gmail.com',0,1,'2025-01-11 15:27:38.684884','0762590966','nguoidungs/2025/01/anh1.jpg',2),(3,'pbkdf2_sha256$870000$AhRj8MQAzkURMWPud0XLUO$DDG6ZONDf5kbwpml2hy4lJRU3FIYfSzH5crQk8rqif0=',NULL,0,'sang','Sang','Tran Huynh','hsang1@gmail.com',0,1,'2025-01-11 15:27:57.944097','0762590977','nguoidungs/2025/01/anh1_xmhONgK.jpg',3);
+INSERT INTO `phongtros_user` VALUES (1,'pbkdf2_sha256$870000$WKKxxZ4ijWAT5uSfplBTSk$I+4HoMqwhgyb28y6gjguUtn+ukAk27ou4DXegJjOQ/g=','2025-01-11 15:26:46.110105',1,'admin','','','admin@gmail.com',1,1,'2025-01-11 15:26:30.996038','','',1),(2,'pbkdf2_sha256$870000$TwkS4mzqtctYk7TVBNrTdN$0B4bC/OdWduqN1pcbeOw2TU/8PxQEqusL/WZ+NJ0Dhs=',NULL,0,'binh','Binh','To Quoc','toquocbinh2102@gmail.com',0,1,'2025-01-11 15:27:38.684884','0762590966','nguoidungs/2025/01/anh1.jpg',2),(3,'pbkdf2_sha256$870000$AhRj8MQAzkURMWPud0XLUO$DDG6ZONDf5kbwpml2hy4lJRU3FIYfSzH5crQk8rqif0=',NULL,0,'sang','Sang','Tran Huynh','hsang1@gmail.com',0,1,'2026-05-06 12:29:22.000000','0762590977','nguoidungs/2025/01/anh1_xmhONgK.jpg',3);
 /*!40000 ALTER TABLE `phongtros_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -673,4 +676,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-11 22:48:45
+-- Dump completed on 2025-01-13 20:53:42

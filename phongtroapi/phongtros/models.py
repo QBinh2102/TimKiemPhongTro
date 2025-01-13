@@ -1,4 +1,5 @@
 from django.db import models
+from ckeditor.fields import RichTextField
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Model, CASCADE
 from vi_address.models import City, District, Ward
@@ -59,7 +60,7 @@ class Tro(BaseModel):
 class BaiDang(BaseModel):
     tieuDe = models.CharField(max_length=255)
     updated_date = models.DateTimeField(auto_now=True)
-    thongTin = models.TextField()
+    thongTin = RichTextField()
     nguoiDangBai = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
