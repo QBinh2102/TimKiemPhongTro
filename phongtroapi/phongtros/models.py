@@ -1,9 +1,10 @@
 from django.db import models
 from ckeditor.fields import RichTextField
 from django.contrib.auth.models import AbstractUser
-from django.db.models import Model, CASCADE
+from django.db.models import Model
 from vi_address.models import City, District, Ward
 from enum import IntEnum
+from cloudinary.models import CloudinaryField
 
 class VaiTro(IntEnum):
     QUANTRIVIEN = 1
@@ -16,9 +17,9 @@ class VaiTro(IntEnum):
 
 class User(AbstractUser):
     SDT = models.CharField(max_length=10)
-    image = models.ImageField(upload_to='nguoidungs/%Y/%m')
+    image = CloudinaryField('avatar', null=True)
     vaiTro = models.IntegerField(choices=VaiTro.choices(), default=VaiTro.QUANTRIVIEN)
-    tuongTac = models.ManyToManyField("self")
+    tuongTac = models.ManyToManyField("self", symmetrical=False, related_name="tuong_tac")
 
     class Meta:
         verbose_name_plural = 'Người dùng'

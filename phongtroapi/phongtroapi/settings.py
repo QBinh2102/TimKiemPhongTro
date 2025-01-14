@@ -144,3 +144,12 @@ REST_FRAMEWORK ={
             'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
         )
 }
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name="dbhhpljbo",
+    api_key="769838993333676",
+    api_secret="sKhPxCraBaikLWgXkceg2nwZox8",
+    secure=True
+)

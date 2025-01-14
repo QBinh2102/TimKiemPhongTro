@@ -117,7 +117,7 @@ CREATE TABLE `django_admin_log` (
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_phongtros_user_id` FOREIGN KEY (`user_id`) REFERENCES `phongtros_user` (`id`),
   CONSTRAINT `django_admin_log_chk_1` CHECK ((`action_flag` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +126,7 @@ CREATE TABLE `django_admin_log` (
 
 LOCK TABLES `django_admin_log` WRITE;
 /*!40000 ALTER TABLE `django_admin_log` DISABLE KEYS */;
-INSERT INTO `django_admin_log` VALUES (1,'2025-01-11 15:27:39.454061','2','binh',1,'[{\"added\": {}}]',7,1),(2,'2025-01-11 15:27:58.684005','3','sang',1,'[{\"added\": {}}]',7,1),(3,'2025-01-11 15:28:38.997970','1','hi',1,'[{\"added\": {}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}, {\"added\": {\"name\": \"anh tro\", \"object\": \"\\u1ea2nh c\\u1ee7a hi\"}}]',12,1),(4,'2025-01-11 15:28:51.919856','1','HIện có trọ giá rẻ',1,'[{\"added\": {}}]',14,1),(5,'2025-01-11 15:29:23.047771','1','BinhLuan object (1)',1,'[{\"added\": {}}]',9,1),(6,'2025-01-11 15:30:08.807240','2','Tìm trọ giá rẻ',1,'[{\"added\": {}}]',8,1),(7,'2025-01-11 15:31:54.243211','2','Tìm trọ giá rẻ',2,'[]',8,1),(8,'2025-01-11 15:38:28.013663','1','hi',2,'[{\"changed\": {\"fields\": [\"Active\"]}}]',12,1),(9,'2025-01-11 15:39:07.013381','1','hi',2,'[{\"changed\": {\"fields\": [\"Active\"]}}]',12,1),(10,'2025-01-12 15:47:20.169531','1','HIện có trọ giá rẻ',2,'[{\"changed\": {\"fields\": [\"ThongTin\"]}}]',14,1),(11,'2025-01-12 15:47:31.885411','1','HIện có trọ giá rẻ',2,'[{\"changed\": {\"fields\": [\"ThongTin\"]}}]',14,1),(12,'2025-01-12 15:47:36.464551','1','HIện có trọ giá rẻ',2,'[]',14,1),(13,'2025-01-12 16:12:11.413063','1','hi',2,'[]',12,1),(14,'2025-01-12 16:12:16.277578','1','hi',2,'[]',12,1),(15,'2025-01-13 12:29:36.086595','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(16,'2025-01-13 12:34:07.636635','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(17,'2025-01-13 12:35:16.559762','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(18,'2025-01-13 13:18:09.587560','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(19,'2025-01-13 13:37:49.423250','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1),(20,'2025-01-13 13:50:56.703503','3','sang',2,'[{\"changed\": {\"fields\": [\"Date joined\"]}}]',7,1);
+INSERT INTO `django_admin_log` VALUES (1,'2025-01-14 12:53:38.831929','2','binh',1,'[{\"added\": {}}]',7,1),(2,'2025-01-14 13:27:51.743910','3','sang',1,'[{\"added\": {}}]',7,1),(3,'2025-01-14 13:28:10.500417','3','sang',2,'[{\"added\": {\"name\": \"from_user-to_user relationship\", \"object\": \"User_tuongTac object (1)\"}}]',7,1),(4,'2025-01-14 13:28:17.054610','3','sang',2,'[{\"deleted\": {\"name\": \"from_user-to_user relationship\", \"object\": \"User_tuongTac object (None)\"}}]',7,1),(5,'2025-01-14 13:35:56.772905','3','sang',2,'[{\"added\": {\"name\": \"from_user-to_user relationship\", \"object\": \"User_tuongTac object (2)\"}}]',7,1),(6,'2025-01-14 13:40:41.063580','3','sang',2,'[]',7,1),(7,'2025-01-14 13:48:25.900699','1','hi',1,'[{\"added\": {}}]',12,1),(8,'2025-01-14 13:48:33.275629','1','Ảnh của hi',1,'[{\"added\": {}}]',13,1),(9,'2025-01-14 13:48:36.934564','2','Ảnh của hi',1,'[{\"added\": {}}]',13,1),(10,'2025-01-14 13:48:42.715453','3','Ảnh của hi',1,'[{\"added\": {}}]',13,1),(11,'2025-01-14 13:55:07.599393','1','hi',2,'[]',12,1),(12,'2025-01-14 13:56:01.463383','1','HIện có trọ giá rẻ',1,'[{\"added\": {}}]',14,1),(13,'2025-01-14 13:56:17.399187','1','BinhLuan object (1)',1,'[{\"added\": {}}]',9,1),(14,'2025-01-14 13:57:41.180716','1','HIện có trọ giá rẻ',2,'[{\"changed\": {\"name\": \"binh luan\", \"object\": \"BinhLuan object (1)\", \"fields\": [\"Active\"]}}]',14,1),(15,'2025-01-14 13:57:44.492233','1','BinhLuan object (1)',2,'[]',9,1),(16,'2025-01-14 13:57:51.331262','1','HIện có trọ giá rẻ',2,'[{\"changed\": {\"name\": \"binh luan\", \"object\": \"BinhLuan object (1)\", \"fields\": [\"Active\"]}}]',14,1),(17,'2025-01-14 14:11:00.726920','1','HIện có trọ giá rẻ',2,'[]',14,1),(18,'2025-01-14 14:11:58.537642','2','Tìm trọ giá rẻ',1,'[{\"added\": {}}]',8,1),(19,'2025-01-14 14:12:17.158886','2','BinhLuan object (2)',1,'[{\"added\": {}}]',9,1),(20,'2025-01-14 14:12:25.845081','2','Tìm trọ giá rẻ',2,'[]',8,1),(21,'2025-01-14 14:25:50.273416','1','hi',3,'',12,1),(22,'2025-01-14 14:26:25.887921','2','hi',1,'[{\"added\": {}}]',12,1),(23,'2025-01-14 14:26:46.119608','4','Ảnh của hi',1,'[{\"added\": {}}]',13,1),(24,'2025-01-14 14:26:50.175198','5','Ảnh của hi',1,'[{\"added\": {}}]',13,1),(25,'2025-01-14 14:26:53.653662','6','Ảnh của hi',1,'[{\"added\": {}}]',13,1),(26,'2025-01-14 14:27:01.175466','7','Ảnh của hi',1,'[{\"added\": {}}]',13,1);
 /*!40000 ALTER TABLE `django_admin_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,7 +169,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +178,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'vi_address','0001_initial','2025-01-11 15:25:19.214100'),(2,'contenttypes','0001_initial','2025-01-11 15:25:19.247739'),(3,'contenttypes','0002_remove_content_type_name','2025-01-11 15:25:19.311223'),(4,'auth','0001_initial','2025-01-11 15:25:19.510038'),(5,'auth','0002_alter_permission_name_max_length','2025-01-11 15:25:19.561854'),(6,'auth','0003_alter_user_email_max_length','2025-01-11 15:25:19.566535'),(7,'auth','0004_alter_user_username_opts','2025-01-11 15:25:19.571037'),(8,'auth','0005_alter_user_last_login_null','2025-01-11 15:25:19.575733'),(9,'auth','0006_require_contenttypes_0002','2025-01-11 15:25:19.577978'),(10,'auth','0007_alter_validators_add_error_messages','2025-01-11 15:25:19.586113'),(11,'auth','0008_alter_user_username_max_length','2025-01-11 15:25:19.590738'),(12,'auth','0009_alter_user_last_name_max_length','2025-01-11 15:25:19.595564'),(13,'auth','0010_alter_group_name_max_length','2025-01-11 15:25:19.606418'),(14,'auth','0011_update_proxy_permissions','2025-01-11 15:25:19.612941'),(15,'auth','0012_alter_user_first_name_max_length','2025-01-11 15:25:19.618278'),(16,'phongtros','0001_initial','2025-01-11 15:25:20.774741'),(17,'admin','0001_initial','2025-01-11 15:25:20.898807'),(18,'admin','0002_logentry_remove_auto_add','2025-01-11 15:25:20.908107'),(19,'admin','0003_logentry_add_action_flag_choices','2025-01-11 15:25:20.918416'),(20,'sessions','0001_initial','2025-01-11 15:25:20.950193'),(21,'phongtros','0002_alter_anhtro_tro','2025-01-12 15:04:54.145675'),(22,'phongtros','0003_alter_baidang_thongtin','2025-01-12 15:40:19.380598');
+INSERT INTO `django_migrations` VALUES (1,'vi_address','0001_initial','2025-01-14 12:52:02.651960'),(2,'contenttypes','0001_initial','2025-01-14 12:52:02.680566'),(3,'contenttypes','0002_remove_content_type_name','2025-01-14 12:52:02.719889'),(4,'auth','0001_initial','2025-01-14 12:52:02.939408'),(5,'auth','0002_alter_permission_name_max_length','2025-01-14 12:52:02.982260'),(6,'auth','0003_alter_user_email_max_length','2025-01-14 12:52:02.987476'),(7,'auth','0004_alter_user_username_opts','2025-01-14 12:52:02.992124'),(8,'auth','0005_alter_user_last_login_null','2025-01-14 12:52:02.996866'),(9,'auth','0006_require_contenttypes_0002','2025-01-14 12:52:02.998648'),(10,'auth','0007_alter_validators_add_error_messages','2025-01-14 12:52:03.002702'),(11,'auth','0008_alter_user_username_max_length','2025-01-14 12:52:03.006756'),(12,'auth','0009_alter_user_last_name_max_length','2025-01-14 12:52:03.011384'),(13,'auth','0010_alter_group_name_max_length','2025-01-14 12:52:03.023126'),(14,'auth','0011_update_proxy_permissions','2025-01-14 12:52:03.029271'),(15,'auth','0012_alter_user_first_name_max_length','2025-01-14 12:52:03.033677'),(16,'phongtros','0001_initial','2025-01-14 12:52:04.071041'),(17,'admin','0001_initial','2025-01-14 12:52:04.177736'),(18,'admin','0002_logentry_remove_auto_add','2025-01-14 12:52:04.187155'),(19,'admin','0003_logentry_add_action_flag_choices','2025-01-14 12:52:04.196394'),(20,'phongtros','0002_alter_anhtro_tro','2025-01-14 12:52:04.211121'),(21,'phongtros','0003_alter_baidang_thongtin','2025-01-14 12:52:04.220869'),(22,'phongtros','0004_alter_user_image','2025-01-14 12:52:04.307652'),(23,'sessions','0001_initial','2025-01-14 12:52:04.334871'),(24,'phongtros','0005_alter_user_tuongtac','2025-01-14 13:22:12.897003'),(25,'oauth2_provider','0001_initial','2025-01-14 14:22:38.168468'),(26,'oauth2_provider','0002_auto_20190406_1805','2025-01-14 14:22:38.230046'),(27,'oauth2_provider','0003_auto_20201211_1314','2025-01-14 14:22:38.301160'),(28,'oauth2_provider','0004_auto_20200902_2022','2025-01-14 14:22:38.648742'),(29,'oauth2_provider','0005_auto_20211222_2352','2025-01-14 14:22:38.734313'),(30,'oauth2_provider','0006_alter_application_client_secret','2025-01-14 14:22:38.767639'),(31,'oauth2_provider','0007_application_post_logout_redirect_uris','2025-01-14 14:22:38.807069'),(32,'oauth2_provider','0008_alter_accesstoken_token','2025-01-14 14:22:38.821041'),(33,'oauth2_provider','0009_add_hash_client_secret','2025-01-14 14:22:38.875851'),(34,'oauth2_provider','0010_application_allowed_origins','2025-01-14 14:22:38.919794'),(35,'oauth2_provider','0011_refreshtoken_token_family','2025-01-14 14:22:38.952292'),(36,'oauth2_provider','0012_add_token_checksum','2025-01-14 14:22:39.161038');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -204,8 +204,202 @@ CREATE TABLE `django_session` (
 
 LOCK TABLES `django_session` WRITE;
 /*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
-INSERT INTO `django_session` VALUES ('4mvwn67kdstj6erd0oufhvlv8sltqm6a','.eJxVjDsOwjAQBe_iGlnr9S-mpOcM1tpe4wCKpXwqxN0hUgpo38y8l4i0rS1uC89xLOIslDj9bonyg6cdlDtNty5zn9Z5THJX5EEXee2Fn5fD_TtotLRvnYkdeIWgjHd1YPAaCQZvPYZAGRETuFJIW1OZSUMKoSZWaKqyWoF4fwDDvDcq:1tWdNu:gAvuVRCZa05_-_ZeMgNZ3N9tHaFrxuqJOG0TpGknxz8','2025-01-25 15:26:46.112342');
+INSERT INTO `django_session` VALUES ('ks8amhneoyf5j2c8kvq9am3z3b4v3og6','.eJxVjEEOwiAQRe_C2hCmQkZcuvcMZAYGqRpISrtqvLtt0oVu_3vvryrQMpewdJnCmNRVgTr9bkzxJXUH6Un10XRsdZ5G1ruiD9r1vSV53w7376BQL1stFgwTRIeYDXs0iU3OQASOBmMto_XMlBIKXNCeSTwIyrAxoeiy-nwB8hQ4cg:1tXgPm:4qvfHPe5QlNa241q_AP_to-XTKHRZYVX267D0hll8S0','2025-01-28 12:53:02.424815');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth2_provider_accesstoken`
+--
+
+DROP TABLE IF EXISTS `oauth2_provider_accesstoken`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `oauth2_provider_accesstoken` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `token` longtext NOT NULL,
+  `expires` datetime(6) NOT NULL,
+  `scope` longtext NOT NULL,
+  `application_id` bigint DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `created` datetime(6) NOT NULL,
+  `updated` datetime(6) NOT NULL,
+  `source_refresh_token_id` bigint DEFAULT NULL,
+  `id_token_id` bigint DEFAULT NULL,
+  `token_checksum` varchar(64) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `oauth2_provider_accesstoken_token_checksum_85319a26_uniq` (`token_checksum`),
+  UNIQUE KEY `source_refresh_token_id` (`source_refresh_token_id`),
+  UNIQUE KEY `id_token_id` (`id_token_id`),
+  KEY `oauth2_provider_acce_application_id_b22886e1_fk_oauth2_pr` (`application_id`),
+  KEY `oauth2_provider_acce_user_id_6e4c9a65_fk_phongtros` (`user_id`),
+  CONSTRAINT `oauth2_provider_acce_application_id_b22886e1_fk_oauth2_pr` FOREIGN KEY (`application_id`) REFERENCES `oauth2_provider_application` (`id`),
+  CONSTRAINT `oauth2_provider_acce_id_token_id_85db651b_fk_oauth2_pr` FOREIGN KEY (`id_token_id`) REFERENCES `oauth2_provider_idtoken` (`id`),
+  CONSTRAINT `oauth2_provider_acce_source_refresh_token_e66fbc72_fk_oauth2_pr` FOREIGN KEY (`source_refresh_token_id`) REFERENCES `oauth2_provider_refreshtoken` (`id`),
+  CONSTRAINT `oauth2_provider_acce_user_id_6e4c9a65_fk_phongtros` FOREIGN KEY (`user_id`) REFERENCES `phongtros_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth2_provider_accesstoken`
+--
+
+LOCK TABLES `oauth2_provider_accesstoken` WRITE;
+/*!40000 ALTER TABLE `oauth2_provider_accesstoken` DISABLE KEYS */;
+INSERT INTO `oauth2_provider_accesstoken` VALUES (1,'dUzRY0dydJ7KMjvBsATeMIq1lbbpsC','2025-01-15 00:45:34.036641','read write',1,1,'2025-01-14 14:45:34.037975','2025-01-14 14:45:34.037984',NULL,NULL,'16e80c5e5fa85a04673aee1f43e78c20b5d529b7ce4aebbeb1db60f57a3e0f75');
+/*!40000 ALTER TABLE `oauth2_provider_accesstoken` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth2_provider_application`
+--
+
+DROP TABLE IF EXISTS `oauth2_provider_application`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `oauth2_provider_application` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `client_id` varchar(100) NOT NULL,
+  `redirect_uris` longtext NOT NULL,
+  `client_type` varchar(32) NOT NULL,
+  `authorization_grant_type` varchar(32) NOT NULL,
+  `client_secret` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `skip_authorization` tinyint(1) NOT NULL,
+  `created` datetime(6) NOT NULL,
+  `updated` datetime(6) NOT NULL,
+  `algorithm` varchar(5) NOT NULL,
+  `post_logout_redirect_uris` longtext NOT NULL,
+  `hash_client_secret` tinyint(1) NOT NULL,
+  `allowed_origins` longtext NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `client_id` (`client_id`),
+  KEY `oauth2_provider_appl_user_id_79829054_fk_phongtros` (`user_id`),
+  KEY `oauth2_provider_application_client_secret_53133678` (`client_secret`),
+  CONSTRAINT `oauth2_provider_appl_user_id_79829054_fk_phongtros` FOREIGN KEY (`user_id`) REFERENCES `phongtros_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth2_provider_application`
+--
+
+LOCK TABLES `oauth2_provider_application` WRITE;
+/*!40000 ALTER TABLE `oauth2_provider_application` DISABLE KEYS */;
+INSERT INTO `oauth2_provider_application` VALUES (1,'jbO17YiiWmq8mUxnQqDOoS4MImv6I4JalZ0z5LAo','','confidential','password','pbkdf2_sha256$870000$xO6N9XJteeWKqZk8CT78I1$plWXfHV5rSsPrd0CyC6GH/GOQ/TIurv9lRqPM+Z2we0=','To Quoc Binh',1,0,'2025-01-14 14:39:12.871063','2025-01-14 14:39:12.871087','','',1,'');
+/*!40000 ALTER TABLE `oauth2_provider_application` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth2_provider_grant`
+--
+
+DROP TABLE IF EXISTS `oauth2_provider_grant`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `oauth2_provider_grant` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `code` varchar(255) NOT NULL,
+  `expires` datetime(6) NOT NULL,
+  `redirect_uri` longtext NOT NULL,
+  `scope` longtext NOT NULL,
+  `application_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `created` datetime(6) NOT NULL,
+  `updated` datetime(6) NOT NULL,
+  `code_challenge` varchar(128) NOT NULL,
+  `code_challenge_method` varchar(10) NOT NULL,
+  `nonce` varchar(255) NOT NULL,
+  `claims` longtext NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`),
+  KEY `oauth2_provider_gran_application_id_81923564_fk_oauth2_pr` (`application_id`),
+  KEY `oauth2_provider_grant_user_id_e8f62af8_fk_phongtros_user_id` (`user_id`),
+  CONSTRAINT `oauth2_provider_gran_application_id_81923564_fk_oauth2_pr` FOREIGN KEY (`application_id`) REFERENCES `oauth2_provider_application` (`id`),
+  CONSTRAINT `oauth2_provider_grant_user_id_e8f62af8_fk_phongtros_user_id` FOREIGN KEY (`user_id`) REFERENCES `phongtros_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth2_provider_grant`
+--
+
+LOCK TABLES `oauth2_provider_grant` WRITE;
+/*!40000 ALTER TABLE `oauth2_provider_grant` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth2_provider_grant` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth2_provider_idtoken`
+--
+
+DROP TABLE IF EXISTS `oauth2_provider_idtoken`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `oauth2_provider_idtoken` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `jti` char(32) NOT NULL,
+  `expires` datetime(6) NOT NULL,
+  `scope` longtext NOT NULL,
+  `created` datetime(6) NOT NULL,
+  `updated` datetime(6) NOT NULL,
+  `application_id` bigint DEFAULT NULL,
+  `user_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `jti` (`jti`),
+  KEY `oauth2_provider_idto_application_id_08c5ff4f_fk_oauth2_pr` (`application_id`),
+  KEY `oauth2_provider_idtoken_user_id_dd512b59_fk_phongtros_user_id` (`user_id`),
+  CONSTRAINT `oauth2_provider_idto_application_id_08c5ff4f_fk_oauth2_pr` FOREIGN KEY (`application_id`) REFERENCES `oauth2_provider_application` (`id`),
+  CONSTRAINT `oauth2_provider_idtoken_user_id_dd512b59_fk_phongtros_user_id` FOREIGN KEY (`user_id`) REFERENCES `phongtros_user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth2_provider_idtoken`
+--
+
+LOCK TABLES `oauth2_provider_idtoken` WRITE;
+/*!40000 ALTER TABLE `oauth2_provider_idtoken` DISABLE KEYS */;
+/*!40000 ALTER TABLE `oauth2_provider_idtoken` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `oauth2_provider_refreshtoken`
+--
+
+DROP TABLE IF EXISTS `oauth2_provider_refreshtoken`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `oauth2_provider_refreshtoken` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) NOT NULL,
+  `access_token_id` bigint DEFAULT NULL,
+  `application_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `created` datetime(6) NOT NULL,
+  `updated` datetime(6) NOT NULL,
+  `revoked` datetime(6) DEFAULT NULL,
+  `token_family` char(32) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `access_token_id` (`access_token_id`),
+  UNIQUE KEY `oauth2_provider_refreshtoken_token_revoked_af8a5134_uniq` (`token`,`revoked`),
+  KEY `oauth2_provider_refr_application_id_2d1c311b_fk_oauth2_pr` (`application_id`),
+  KEY `oauth2_provider_refr_user_id_da837fce_fk_phongtros` (`user_id`),
+  CONSTRAINT `oauth2_provider_refr_access_token_id_775e84e8_fk_oauth2_pr` FOREIGN KEY (`access_token_id`) REFERENCES `oauth2_provider_accesstoken` (`id`),
+  CONSTRAINT `oauth2_provider_refr_application_id_2d1c311b_fk_oauth2_pr` FOREIGN KEY (`application_id`) REFERENCES `oauth2_provider_application` (`id`),
+  CONSTRAINT `oauth2_provider_refr_user_id_da837fce_fk_phongtros` FOREIGN KEY (`user_id`) REFERENCES `phongtros_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `oauth2_provider_refreshtoken`
+--
+
+LOCK TABLES `oauth2_provider_refreshtoken` WRITE;
+/*!40000 ALTER TABLE `oauth2_provider_refreshtoken` DISABLE KEYS */;
+INSERT INTO `oauth2_provider_refreshtoken` VALUES (1,'Hyg7ADIzbPEQYFiyC0bPCH1p1FX55S',1,1,1,'2025-01-14 14:45:34.040945','2025-01-14 14:45:34.040964',NULL,'c19e420469cd4396a882cdbb19a00ee0');
+/*!40000 ALTER TABLE `oauth2_provider_refreshtoken` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -222,7 +416,7 @@ CREATE TABLE `phongtros_anhtro` (
   PRIMARY KEY (`id`),
   KEY `phongtros_anhtro_tro_id_3b4500fa_fk_phongtros_tro_id` (`tro_id`),
   CONSTRAINT `phongtros_anhtro_tro_id_3b4500fa_fk_phongtros_tro_id` FOREIGN KEY (`tro_id`) REFERENCES `phongtros_tro` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,7 +425,7 @@ CREATE TABLE `phongtros_anhtro` (
 
 LOCK TABLES `phongtros_anhtro` WRITE;
 /*!40000 ALTER TABLE `phongtros_anhtro` DISABLE KEYS */;
-INSERT INTO `phongtros_anhtro` VALUES (1,'phongtros/2025/01/anh5.png',1),(2,'phongtros/2025/01/anh4.png',1),(3,'phongtros/2025/01/anh3.jpg',1);
+INSERT INTO `phongtros_anhtro` VALUES (4,'phongtros/2025/01/anh5.png',2),(5,'phongtros/2025/01/anh4.png',2),(6,'phongtros/2025/01/anh3.jpg',2),(7,'phongtros/2025/01/anh2.jpg',2);
 /*!40000 ALTER TABLE `phongtros_anhtro` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +456,7 @@ CREATE TABLE `phongtros_baidang` (
 
 LOCK TABLES `phongtros_baidang` WRITE;
 /*!40000 ALTER TABLE `phongtros_baidang` DISABLE KEYS */;
-INSERT INTO `phongtros_baidang` VALUES (1,1,'2025-01-11 15:28:51.918052','HIện có trọ giá rẻ','2025-01-12 15:47:36.460999','<p>abcd<strong>&egrave;gAAAAA</strong><u>BBBBBB</u><em>CCCC<span style=\"color:#e67e22\">CCC</span></em></p>',2),(2,1,'2025-01-11 15:30:08.805917','Tìm trọ giá rẻ','2025-01-11 15:31:54.241346','abc',3);
+INSERT INTO `phongtros_baidang` VALUES (2,1,'2025-01-14 14:11:58.536951','Tìm trọ giá rẻ','2025-01-14 14:12:25.841108','<p>abcd</p>',3);
 /*!40000 ALTER TABLE `phongtros_baidang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -289,7 +483,6 @@ CREATE TABLE `phongtros_baidangchothue` (
 
 LOCK TABLES `phongtros_baidangchothue` WRITE;
 /*!40000 ALTER TABLE `phongtros_baidangchothue` DISABLE KEYS */;
-INSERT INTO `phongtros_baidangchothue` VALUES (1,1);
 /*!40000 ALTER TABLE `phongtros_baidangchothue` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -313,7 +506,7 @@ CREATE TABLE `phongtros_binhluan` (
   KEY `phongtros_binhluan_nguoiBinhLuan_id_e48603e0_fk_phongtros` (`nguoiBinhLuan_id`),
   CONSTRAINT `phongtros_binhluan_baiDang_id_e2c50d52_fk_phongtros_baidang_id` FOREIGN KEY (`baiDang_id`) REFERENCES `phongtros_baidang` (`id`),
   CONSTRAINT `phongtros_binhluan_nguoiBinhLuan_id_e48603e0_fk_phongtros` FOREIGN KEY (`nguoiBinhLuan_id`) REFERENCES `phongtros_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,7 +515,7 @@ CREATE TABLE `phongtros_binhluan` (
 
 LOCK TABLES `phongtros_binhluan` WRITE;
 /*!40000 ALTER TABLE `phongtros_binhluan` DISABLE KEYS */;
-INSERT INTO `phongtros_binhluan` VALUES (1,1,'2025-01-11 15:29:23.047100','inbox cho em hỏi xíu','2025-01-11 15:29:23.047120',1,3);
+INSERT INTO `phongtros_binhluan` VALUES (2,1,'2025-01-14 14:12:17.156221','hi','2025-01-14 14:12:17.156269',2,2);
 /*!40000 ALTER TABLE `phongtros_binhluan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -346,7 +539,7 @@ CREATE TABLE `phongtros_chat` (
   KEY `phongtros_chat_nguoiNhan_id_e950f9f9_fk_phongtros_user_id` (`nguoiNhan_id`),
   CONSTRAINT `phongtros_chat_nguoiGui_id_34311817_fk_phongtros_user_id` FOREIGN KEY (`nguoiGui_id`) REFERENCES `phongtros_user` (`id`),
   CONSTRAINT `phongtros_chat_nguoiNhan_id_e950f9f9_fk_phongtros_user_id` FOREIGN KEY (`nguoiNhan_id`) REFERENCES `phongtros_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -355,7 +548,6 @@ CREATE TABLE `phongtros_chat` (
 
 LOCK TABLES `phongtros_chat` WRITE;
 /*!40000 ALTER TABLE `phongtros_chat` DISABLE KEYS */;
-INSERT INTO `phongtros_chat` VALUES (1,1,'2025-01-12 14:47:56.750555','2025-01-12 14:47:56.750606',1,2,3),(2,1,'2025-01-12 14:48:31.920201','2025-01-12 14:48:31.920239',1,3,2);
 /*!40000 ALTER TABLE `phongtros_chat` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -380,7 +572,6 @@ CREATE TABLE `phongtros_chatanh` (
 
 LOCK TABLES `phongtros_chatanh` WRITE;
 /*!40000 ALTER TABLE `phongtros_chatanh` DISABLE KEYS */;
-INSERT INTO `phongtros_chatanh` VALUES (2,'chats/2025/01/anh5.png');
 /*!40000 ALTER TABLE `phongtros_chatanh` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -405,7 +596,6 @@ CREATE TABLE `phongtros_chattext` (
 
 LOCK TABLES `phongtros_chattext` WRITE;
 /*!40000 ALTER TABLE `phongtros_chattext` DISABLE KEYS */;
-INSERT INTO `phongtros_chattext` VALUES (1,'Hi');
 /*!40000 ALTER TABLE `phongtros_chattext` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -438,7 +628,7 @@ CREATE TABLE `phongtros_tro` (
   CONSTRAINT `phongtros_tro_quan_id_dbe31695_fk_vi_address_district_id` FOREIGN KEY (`quan_id`) REFERENCES `vi_address_district` (`id`),
   CONSTRAINT `phongtros_tro_thanh_pho_id_de935605_fk_vi_address_city_id` FOREIGN KEY (`thanh_pho_id`) REFERENCES `vi_address_city` (`id`),
   CONSTRAINT `phongtros_tro_chk_1` CHECK ((`gia` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,7 +637,7 @@ CREATE TABLE `phongtros_tro` (
 
 LOCK TABLES `phongtros_tro` WRITE;
 /*!40000 ALTER TABLE `phongtros_tro` DISABLE KEYS */;
-INSERT INTO `phongtros_tro` VALUES (1,1,'2025-01-11 15:28:38.990411','hi','1024 Nguyễn Trãi',100000,2,2,1,1,1);
+INSERT INTO `phongtros_tro` VALUES (2,1,'2025-01-14 14:26:25.887014','hi','1024 Nguyễn Trãi',200000,1,2,1,1,1);
 /*!40000 ALTER TABLE `phongtros_tro` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -471,11 +661,11 @@ CREATE TABLE `phongtros_user` (
   `is_active` tinyint(1) NOT NULL,
   `date_joined` datetime(6) NOT NULL,
   `SDT` varchar(10) NOT NULL,
-  `image` varchar(100) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `vaiTro` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -484,7 +674,7 @@ CREATE TABLE `phongtros_user` (
 
 LOCK TABLES `phongtros_user` WRITE;
 /*!40000 ALTER TABLE `phongtros_user` DISABLE KEYS */;
-INSERT INTO `phongtros_user` VALUES (1,'pbkdf2_sha256$870000$WKKxxZ4ijWAT5uSfplBTSk$I+4HoMqwhgyb28y6gjguUtn+ukAk27ou4DXegJjOQ/g=','2025-01-11 15:26:46.110105',1,'admin','','','admin@gmail.com',1,1,'2025-01-11 15:26:30.996038','','',1),(2,'pbkdf2_sha256$870000$TwkS4mzqtctYk7TVBNrTdN$0B4bC/OdWduqN1pcbeOw2TU/8PxQEqusL/WZ+NJ0Dhs=',NULL,0,'binh','Binh','To Quoc','toquocbinh2102@gmail.com',0,1,'2025-01-11 15:27:38.684884','0762590966','nguoidungs/2025/01/anh1.jpg',2),(3,'pbkdf2_sha256$870000$AhRj8MQAzkURMWPud0XLUO$DDG6ZONDf5kbwpml2hy4lJRU3FIYfSzH5crQk8rqif0=',NULL,0,'sang','Sang','Tran Huynh','hsang1@gmail.com',0,1,'2026-05-06 12:29:22.000000','0762590977','nguoidungs/2025/01/anh1_xmhONgK.jpg',3);
+INSERT INTO `phongtros_user` VALUES (1,'pbkdf2_sha256$870000$L50XtBMqbEMinddvRwoyUd$9O2y6+AEWyBvGEZH06tobSmIZub6Gf+574RCMhYakqU=','2025-01-14 12:53:02.422252',1,'admin','','','admin@gmail.com',1,1,'2025-01-14 12:52:48.812868','',NULL,1),(2,'pbkdf2_sha256$870000$kcDEzflpO8mELnYjAFAg0h$KyO/YrSwn+EGo3O2OgLyUFeILdtozTineYwOvSZZdpY=',NULL,0,'binh','Binh','To Quoc','toquocbinh2102@gmail.com',0,1,'2025-01-14 12:53:33.000000','0762590966','image/upload/v1736859219/chn1ajpwfci5uhqdffxp.jpg',2),(3,'pbkdf2_sha256$870000$tC7fTNM6QI6yXOjVB2GqGo$Zleq1de+3KXKH0axmWiYd8f1z0viigp0XogFy8RAMFE=',NULL,0,'sang','Sang','Tran Huynh','hsang1@gmail.com',0,1,'2025-01-14 13:27:28.000000','0762590966','image/upload/v1736861272/gtjg3runvl9q8wifbrvu.jpg',3),(4,'pbkdf2_sha256$870000$Yzhp9XkXUwU4b8efGd8lri$hQgJOetmPwgZuGBMLm6p/hkzpSPQ+yq2cb0INivF7zc=',NULL,0,'qbinh','Binh','To Quoc','quocbinh2102@gmail.com',0,1,'2025-01-14 14:36:11.064071','0762590955','image/upload/v1736865377/u3wjgpitzhuwajr0ht5s.jpg',3);
 /*!40000 ALTER TABLE `phongtros_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -532,7 +722,7 @@ CREATE TABLE `phongtros_user_tuongtac` (
   KEY `phongtros_user_tuongTac_to_user_id_17cb65a3_fk_phongtros_user_id` (`to_user_id`),
   CONSTRAINT `phongtros_user_tuong_from_user_id_f75405d4_fk_phongtros` FOREIGN KEY (`from_user_id`) REFERENCES `phongtros_user` (`id`),
   CONSTRAINT `phongtros_user_tuongTac_to_user_id_17cb65a3_fk_phongtros_user_id` FOREIGN KEY (`to_user_id`) REFERENCES `phongtros_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -541,6 +731,7 @@ CREATE TABLE `phongtros_user_tuongtac` (
 
 LOCK TABLES `phongtros_user_tuongtac` WRITE;
 /*!40000 ALTER TABLE `phongtros_user_tuongtac` DISABLE KEYS */;
+INSERT INTO `phongtros_user_tuongtac` VALUES (2,3,2);
 /*!40000 ALTER TABLE `phongtros_user_tuongtac` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -676,4 +867,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-13 20:53:42
+-- Dump completed on 2025-01-14 21:51:01

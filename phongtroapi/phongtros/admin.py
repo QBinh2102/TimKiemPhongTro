@@ -25,16 +25,46 @@ class MyTroAdmin(admin.AdminSite):
             'user_count' : user_count
         })
 
+#--
+class CustomTuongTacInline(admin.TabularInline):
+    model = User.tuongTac.through
+    fk_name = "from_user"
+    extra = 0
+    verbose_name_plural = "Danh sách tương tác"
+    can_delete = False
+    readonly_fields = ['to_user']
+
+    def has_add_permission(self, request, obj):
+        return False
+
+    # Hiển thị tên người dùng tương tác thay vì ID
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        user_id = request.resolver_match.kwargs.get('object_id')
+        if user_id:
+            return queryset.filter(from_user_id=user_id)
+        return queryset
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "to_user":
+            user_id = request.resolver_match.kwargs.get('object_id')
+            if user_id:
+                current_user = User.objects.get(id=user_id)
+                if current_user.vaiTro == VaiTro.NGUOITHUETRO:
+                    kwargs["queryset"] = User.objects.filter(vaiTro=VaiTro.CHUNHATRO).exclude(id=user_id)
+                elif current_user.vaiTro == VaiTro.CHUNHATRO:
+                    kwargs["queryset"] = User.objects.filter(vaiTro=VaiTro.NGUOITHUETRO).exclude(id=user_id)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 class UserAdmin(admin.ModelAdmin):
-    # Chỉ hiển thị trường 'username' và 'password'
-    fields = ('username', 'password', 'email', 'first_name', 'last_name', 'SDT', 'vaiTro', 'image', 'avatar','date_joined')
+    fields = ('username', 'password', 'email', 'first_name', 'last_name', 'SDT', 'vaiTro', 'image', 'avatar', 'date_joined')
     list_display = ['username', 'email', 'SDT']
     search_fields = ['username']
     readonly_fields = ['avatar']
+    inlines = [CustomTuongTacInline]
 
     def avatar(self, nguoidung):
-        return mark_safe(f'<img src="/static/{nguoidung.image.name}" width="200" />')
+        return mark_safe(f'<img src="{nguoidung.image.url}" width="200" />')
 
     def save_model(self, request, obj, form, change):
         # Chỉ gán giá trị mặc định khi tạo mới người dùng
@@ -47,27 +77,23 @@ class UserAdmin(admin.ModelAdmin):
                 obj.is_staff = False
             obj.is_active = True
             obj.set_password(form.cleaned_data['password'])
-        super().save_model(request, obj, form, change)  # Gọi phương thức lưu của lớp cha
+        super().save_model(request, obj, form, change)
 
+# --
 class CustomAnhTroInline(admin.TabularInline):
     model = AnhTro
     extra = 0
+    verbose_name_plural = "Danh sách ảnh trọ"
     readonly_fields = ['image']
+    can_delete = False
+
+    def has_add_permission(self, request, obj):
+        return False
 
     def image(self, anhTro):
         return mark_safe(f'<img src="/static/{anhTro.anh.name}" width="150" />')
 
-    image.short_description = "Ảnh"
-
-    def has_delete_permission(self, request, obj=None):
-        if obj:
-            current_count = AnhTro.objects.filter(tro=obj).count()
-            if current_count <= 3:
-                return False
-        return super().has_delete_permission(request, obj)
-
     def get_queryset(self, request):
-        # Lọc ảnh chỉ liên quan đến trọ đang chỉnh sửa
         qs = super().get_queryset(request)
         tro_id = request.resolver_match.kwargs.get('object_id')
         if tro_id:
@@ -84,10 +110,16 @@ class TroAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+# --
 class CustomBinhLuanInline(admin.TabularInline):
     model = BinhLuan
     extra = 0
+    verbose_name_plural = "Danh sách bình luận"
+    can_delete = False
     readonly_fields = ['nguoiBinhLuan', 'thongTin']
+
+    def has_add_permission(self, request, obj):
+        return False
 
     def get_queryset(self, request):
         bl = super().get_queryset(request)

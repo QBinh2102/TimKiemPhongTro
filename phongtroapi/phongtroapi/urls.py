@@ -33,11 +33,11 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('', include('phongtros.urls')),
     path('admin/', admin_site.urls),
     path('api/address/', include('vi_address.urls')),
     path('user-stats-api/', user_stats_api, name='user_stats_api'),
     path('get-available-years/', get_available_years, name='get_available_years'),
-    path('', include('phongtros.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0),
          name='schema-swagger-ui'),
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
