@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import oauth2_provider.contrib.rest_framework
 from ckeditor_demo.settings import CKEDITOR_UPLOAD_PATH
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'ckeditor',
     'ckeditor_uploader',
+    'oauth2_provider'
 ]
 
 MIDDLEWARE = [
@@ -135,3 +137,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK ={
+    'DEFAULT_AUTHENTICATION_CLASSES':
+        (
+            'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        )
+}

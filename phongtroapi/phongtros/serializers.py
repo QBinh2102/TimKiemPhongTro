@@ -8,7 +8,27 @@ class UserSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = User
-        fields = ['id','email', 'username', 'first_name', 'last_name', 'SDT', 'image', 'vaiTro', 'tuongTac']
+        fields = ['id','password','email', 'username', 'first_name', 'last_name', 'SDT', 'image', 'vaiTro', 'tuongTac']
+        extra_kwargs={
+            'password':{'write_only':'true'}
+        }
+    def create(self, validated_data):
+
+        tuong_tac_data = validated_data.pop('tuongTac', None)
+        password = validated_data.pop('password', None)
+
+        if tuong_tac_data:
+            tuong_tac_data = [int(pk) for pk in tuong_tac_data]
+
+        user = User(**validated_data)
+        if password:
+            user.set_password(password)
+        user.save()
+        if tuong_tac_data:
+            user.tuongTac.set(tuong_tac_data)
+
+        return user
+
 
 class User2(serializers.ModelSerializer):
     class Meta:

@@ -11,6 +11,7 @@ router.register(r'baidangs', views.BaiDangViewSet)
 router.register(r'baidangchothues', views.BaiDangChoThueViewSet)
 router.register(r'chattexts', views.ChatTextViewSet)
 router.register(r'chatanhs', views.ChatAnhViewSet)
+# router.register(r'users2', views.UserViewSet, basename='custom-user')
 
 urlpatterns = [
     path('', include(router.urls)),

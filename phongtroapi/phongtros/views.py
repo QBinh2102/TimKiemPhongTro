@@ -1,9 +1,10 @@
 # myapp/views.py
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework import status
+from rest_framework.decorators import action, permission_classes
+from rest_framework import status, permissions
+from rest_framework.parsers import  MultiPartParser
 from django.db.models import Count
 from django.db.models.functions import TruncYear, TruncQuarter, TruncMonth, ExtractYear
 from .models import User, Tro, AnhTro, BaiDang, BaiDangChoThue, BinhLuan, Chat, ChatText, ChatAnh
@@ -13,10 +14,26 @@ from .serializers import (
     ChatSerializer, ChatTextSerializer, ChatAnhSerializer
 )
 
-# ViewSet cho User
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+class UserViewSet(viewsets.ViewSet,
+                   generics.ListAPIView,
+                   generics.CreateAPIView,  #post
+                   generics.RetrieveAPIView):#get
+    queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
+    parser_classes = [MultiPartParser, ]
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return [permissions.IsAuthenticated()]
+
+        return [permissions.AllowAny()]
+
+# # ViewSet cho User
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+
+
 
 class TroViewSet(viewsets.ModelViewSet):
     queryset = Tro.objects.filter(active=True)
@@ -29,7 +46,7 @@ class TroViewSet(viewsets.ModelViewSet):
             t = Tro.objects.get(pk=pk)
             t.active = False
             t.save()
-        except Tro.DoesNotExits:
+        except Tro.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(data=TroSerializer(t).data, status = status.HTTP_200_OK)
 
