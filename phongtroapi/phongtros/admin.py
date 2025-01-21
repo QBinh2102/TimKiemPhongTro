@@ -57,14 +57,17 @@ class CustomTuongTacInline(admin.TabularInline):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 class UserAdmin(admin.ModelAdmin):
-    fields = ('username', 'password', 'email', 'first_name', 'last_name', 'SDT', 'vaiTro', 'image', 'avatar', 'date_joined')
+    fields = ('username', 'password', 'email', 'first_name', 'last_name', 'SDT', 'vaiTro', 'image', 'avatar')
     list_display = ['username', 'email', 'SDT']
     search_fields = ['username']
     readonly_fields = ['avatar']
     inlines = [CustomTuongTacInline]
 
     def avatar(self, nguoidung):
-        return mark_safe(f'<img src="{nguoidung.image.url}" width="200" />')
+        if nguoidung.image:
+            return mark_safe(f'<img src="{nguoidung.image.url}" width="200" />')
+        return "No Image"
+
 
     def save_model(self, request, obj, form, change):
         # Chỉ gán giá trị mặc định khi tạo mới người dùng

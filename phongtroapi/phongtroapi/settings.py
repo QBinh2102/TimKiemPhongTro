@@ -96,6 +96,7 @@ pymysql.install_as_MySQLdb()
 
 AUTH_USER_MODEL = 'phongtros.User'
 
+MEDIA_URL = '/media/'
 MEDIA_ROOT = '%s/phongtros/static/' % BASE_DIR
 CKEDITOR_UPLOAD_PATH = 'baidangs/'
 
