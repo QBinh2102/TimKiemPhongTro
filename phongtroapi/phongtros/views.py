@@ -54,6 +54,7 @@ class TroViewSet(viewsets.ModelViewSet):
 class AnhTroViewSet(viewsets.ModelViewSet):
     queryset = AnhTro.objects.all()
     serializer_class = AnhTroSerializer
+    http_method_names = ['get']
 
 
 # ViewSet cho BaiDang
