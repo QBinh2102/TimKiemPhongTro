@@ -1,35 +1,117 @@
+// Import các thư viện cần thiết
+import React, { useContext, useReducer } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Icon } from "react-native-paper";
+
+// Import các component màn hình
 import Home from './components/Home/Home';
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import Login from './components/User/Login';
+import Register from './components/User/Register';
+import UserProfile from "./components/User/Profile";
+import TimNguoiKhac from "./components/Home/TimNguoiKhac";
+import ChiTietBaiDang from "./components/Home/ChiTietBaiDang";
+import TrangCaNhan from "./components/Home/TrangCaNhan";
 
-import { getDatabase, ref, set } from "firebase/database";
+// Import context và reducer
+import { MyDispatchContext, MyUserContext } from './configs/MyUserContext';
+import MyUserReducers from './configs/MyUserReducers';
 
+// Tạo TabNavigator
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAjAiJfAaclDPjK2B5M9sBUud4phIpb9ow",
-  authDomain: "timkiemphongtro-e5cc6.firebaseapp.com",
-  databaseURL: "https://timkiemphongtro-e5cc6-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "timkiemphongtro-e5cc6",
-  storageBucket: "timkiemphongtro-e5cc6.firebasestorage.app",
-  messagingSenderId: "525846725068",
-  appId: "1:525846725068:web:dbbe97f76dff3af3de5d69",
-  measurementId: "G-XTCXJFP2NY"
+// Tạo HomeStackNavigator để điều hướng trong Home
+const HomeStackNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="Home" 
+        component={Home} 
+        options={{ title: "Trang chính" }} 
+      />
+      <Stack.Screen 
+        name="ChiTietBaiDang" 
+        component={ChiTietBaiDang} 
+        options={{ title: "Chi tiết bài đăng" }} 
+      />
+      <Stack.Screen 
+        name="TimNguoiKhac" 
+        component={TimNguoiKhac} 
+        options={{ title: "Tìm người khác" }} 
+      />
+      <Stack.Screen 
+        name="TrangCaNhan" 
+        component={TrangCaNhan} 
+        options={{ title: "Trang cá nhân" }} 
+      />
+    </Stack.Navigator>
+  );
 };
 
+// Tạo TabNavigator
+const TabNavigator = () => {
+  const user = useContext(MyUserContext);
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-function guiDuLieu() {
-  const db = getDatabase();
-  set(ref(db, 'Dia chi gui len'), {
-    tenBien: "gia tri gui len"  });
-}
-
-
-export default function App() {
   return (
-      <Home />
+    <Tab.Navigator>
+      {user === null ? (
+        <>
+          <Tab.Screen 
+            name="Login" 
+            component={Login} 
+            options={{ 
+              title: "Đăng nhập", 
+              tabBarIcon: () => <Icon source="account-check" size={20} /> 
+            }} 
+          />
+          <Tab.Screen 
+            name="Register" 
+            component={Register} 
+            options={{ 
+              title: "Đăng ký", 
+              tabBarIcon: () => <Icon source="account-plus" size={20} /> 
+            }} 
+          />
+        </>
+      ) : (
+        <>
+          <Tab.Screen 
+            name="HomeStack" 
+            component={HomeStackNavigator} 
+            options={{ 
+              title: "Trang chủ", 
+              headerShown: false,
+              tabBarIcon: () => <Icon source="home-account" size={20} /> 
+            }} 
+          />
+          <Tab.Screen 
+            name="Profile" 
+            component={UserProfile} 
+            options={{ 
+              title: "Tài khoản", 
+              headerShown: false, 
+              tabBarIcon: () => <Icon source="account-check" size={20} /> 
+            }} 
+          />
+        </>
+      )}
+    </Tab.Navigator>
+  );
+};
+
+// App chính
+export default function App() {
+  const [user, dispatch] = useReducer(MyUserReducers, null);
+
+  return (
+    <NavigationContainer>
+      <MyUserContext.Provider value={user}>
+        <MyDispatchContext.Provider value={dispatch}>
+          <TabNavigator />
+        </MyDispatchContext.Provider>
+      </MyUserContext.Provider>
+    </NavigationContainer>
   );
 }

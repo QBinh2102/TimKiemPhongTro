@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
 from rest_framework import status, permissions
-from rest_framework.parsers import  MultiPartParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Count
 from django.db.models.functions import TruncYear, TruncQuarter, TruncMonth, ExtractYear
 from .models import User, Tro, AnhTro, BaiDang, BaiDangChoThue, BinhLuan, Chat, ChatText, ChatAnh
@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ViewSet,
                    generics.RetrieveAPIView):#get
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
-    parser_classes = [MultiPartParser, ]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_permissions(self):
         if self.action == 'retrieve':
@@ -134,3 +134,25 @@ def user_stats_api(request):
         # Biến đổi thành danh sách giá trị tương ứng
         values = list(values_dict.values())
     return JsonResponse({'labels': labels, 'values': values})
+
+
+def register_user(request):
+    if request.method == 'POST':
+        # Lấy các dữ liệu từ request.POST
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        sdt = request.POST.get('SDT')
+        vaiTro = request.POST.get('vaiTro')
+
+        # Xử lý file (nếu có) từ request.FILES
+        avatar = request.FILES.get('avatar')  # Nếu người dùng có upload avatar
+
+        # Bạn có thể xử lý hoặc lưu dữ liệu vào database ở đây
+        # Ví dụ: tạo user mới hoặc lưu file avatar
+
+        return JsonResponse({'message': 'User registered successfully'})
+
+    return JsonResponse({'error': 'Invalid method'}, status=400)
