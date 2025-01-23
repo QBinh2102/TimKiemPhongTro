@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, TextInput, Button } from "react-native";
 import { Avatar } from "react-native-elements";
 import { Subheading } from "react-native-paper";
+import { MyUserContext } from "../../configs/MyUserContext";
 
 const ChiTietBaiDang = ({ route, navigation }) => {
+  const userLogin = useContext(MyUserContext);
   const { baiDang } = route.params;
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -42,7 +44,7 @@ const ChiTietBaiDang = ({ route, navigation }) => {
       body: JSON.stringify({
         baiDang: baiDang.id,
         thongTin: newComment,
-        nguoiBinhLuan: baiDang.nguoiDangBai.id, 
+        nguoiBinhLuan: userLogin.id, // Use the logged-in user's ID
       }),
     })
       .then((response) => response.json())
