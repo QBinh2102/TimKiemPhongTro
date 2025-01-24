@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Button } from "react-native";
+import { MyUserContext, MyDispatchContext } from "../../configs/MyUserContext";  // Import context
 
 const TrangCaNhan = ({ route, navigation }) => {
   const { userId } = route.params;
+  const userLogin = useContext(MyUserContext);  // Lấy thông tin người dùng đăng nhập
+  const dispatch = useContext(MyDispatchContext);  // Lấy dispatch để cập nhật dữ liệu người dùng
   const [userData, setUserData] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
+  const [isFollowing, setIsFollowing] = useState(false);
 
+  // Hàm lấy vai trò của người dùng
   const getVaiTroName = (vaiTro) => {
-    if (vaiTro === 1) {
-      return "Quản trị viên";
-    } else if (vaiTro === 2) {
-      return "Chủ nhà trọ";
-    } else if (vaiTro === 3) {
-      return "Người thuê trọ";
-    }
+    if (vaiTro === 1) return "Quản trị viên";
+    else if (vaiTro === 2) return "Chủ nhà trọ";
+    else if (vaiTro === 3) return "Người thuê trọ";
   };
 
+  // Hàm định dạng ngày tháng
   const formatDate = (date) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -25,30 +27,84 @@ const TrangCaNhan = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    // Lấy thông tin người dùng
-    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userId}`)
-      .then((response) => response.json())
-      .then((data) => setUserData(data))
-      .catch((error) => console.error("Error fetching user data:", error));
+  fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      setUserData(data);
+      setIsFollowing(userLogin.tuongTac.includes(data.id));  // Kiểm tra xem đã theo dõi chưa
+    })
+    .catch((error) => console.error("Error fetching user data:", error));
 
-    // Lấy bài viết của người dùng, lọc theo nguoiDangBai.id
-    fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
-      .then((response) => response.json())
-      .then((data) => {
-        // Lọc bài đăng theo nguoiDangBai.id
-        const filteredPosts = data.filter(post => post.nguoiDangBai === userId);
-        setUserPosts(filteredPosts);
+  fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
+    .then((response) => response.json())
+    .then((data) => {
+      const filteredPosts = data.filter(post => post.nguoiDangBai === userId);
+      setUserPosts(filteredPosts);
+    })
+    .catch((error) => console.error("Error fetching user posts:", error));
+}, [userId, userLogin.tuongTac]);  // Đảm bảo cập nhật khi tuongTac thay đổi
+
+
+  const handleFollow = () => {
+    const updatedTuongTac = [...userLogin.tuongTac, userId];  // Thêm người dùng vào danh sách theo dõi
+  
+    // Cập nhật tuongTac của userLogin
+    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userLogin.id}/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userLogin.token}`,
+      },
+      body: JSON.stringify({
+        tuongTac: updatedTuongTac,
+      }),
+    })
+      .then(response => response.json())
+      .then(() => {
+        // Cập nhật lại tuongTac trong context
+        dispatch({ type: 'UPDATE_TUONGTAC', payload: updatedTuongTac });
+  
+        // Kiểm tra sau khi dispatch
+        console.log("Updated tuongTac in context:", updatedTuongTac);
+  
+        setIsFollowing(true);
       })
-      .catch((error) => console.error("Error fetching user posts:", error));
-  }, [userId]);
-
+      .catch(error => console.error("Error following user:", error));
+  };
+  
+  const handleUnfollow = () => {
+    const updatedTuongTac = userLogin.tuongTac.filter(item => item !== userId);  // Lọc bỏ người dùng khỏi danh sách theo dõi
+  
+    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userLogin.id}/`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userLogin.token}`,
+      },
+      body: JSON.stringify({
+        tuongTac: updatedTuongTac,
+      }),
+    })
+      .then(response => response.json())
+      .then(() => {
+        // Cập nhật lại tuongTac trong context
+        dispatch({ type: 'UPDATE_TUONGTAC', payload: updatedTuongTac });
+  
+        // Kiểm tra sau khi dispatch
+        console.log("Updated tuongTac in context:", updatedTuongTac);
+  
+        setIsFollowing(false);
+      })
+      .catch(error => console.error("Error unfollowing user:", error));
+  };
+  
   return (
     <ScrollView style={styles.container}>
       {userData ? (
         <>
           <View style={styles.profileHeader}>
             <Image
-              source={userData && userData.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${userData.image}` } : null}
+              source={userData.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${userData.image}` } : null}
               style={styles.profileImage}
             />
             <View style={styles.profileInfo}>
@@ -64,8 +120,19 @@ const TrangCaNhan = ({ route, navigation }) => {
             <Text style={styles.contactText}>Số điện thoại: {userData.SDT}</Text>
             <Text style={styles.contactText}>Email: {userData.email}</Text>
             <Text style={styles.contactText}>Vai trò: {getVaiTroName(userData.vaiTro)}</Text>
-            <Text style={styles.contactText}>Ngày tham gia: {formatDate(userData.date_joined)}</Text> 
+            <Text style={styles.contactText}>Ngày tham gia: {formatDate(userData.date_joined)}</Text>
           </View>
+
+          {/* Nút Follow / Hủy theo dõi */}
+          {userLogin.id !== userId && (
+            <View style={styles.followButtonContainer}>
+              {isFollowing ? (
+                <Button title="Hủy theo dõi" onPress={handleUnfollow} color="#d32f2f" />
+              ) : (
+                <Button title="Theo dõi" onPress={handleFollow} color="#0288d1" />
+              )}
+            </View>
+          )}
 
           <Text style={styles.postsTitle}>Bài viết của {userData.first_name}:</Text>
 
@@ -203,6 +270,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: "center",
     fontStyle: "italic",
+  },
+  followButtonContainer: {
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
 

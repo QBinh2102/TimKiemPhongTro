@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-4wl=pt6+#21lpjfl3abf0)x2vtih+^yuc^kz=w$c!gvj3x_t+l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['toquocbinh2102.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'ckeditor',
     'ckeditor_uploader',
-    'oauth2_provider',
-    'corsheaders',
+    'oauth2_provider'
 ]
 
 MIDDLEWARE = [
@@ -56,11 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    # 'oauth2_provider.middleware.OAuth2TokenMiddleware',
 ]
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'phongtroapi.urls'
 
@@ -88,10 +83,10 @@ WSGI_APPLICATION = 'phongtroapi.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'toquocbinh2102$phongtrodb',
-        'USER': 'toquocbinh2102',
-        'PASSWORD': 'admin@123',
-        'HOST': 'toquocbinh2102.mysql.pythonanywhere-services.com'  # mặc định localhost
+        'NAME': 'phongtrodb',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': ''  # mặc định localhost
     }
 }
 
@@ -103,7 +98,6 @@ AUTH_USER_MODEL = 'phongtros.User'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '%s/phongtros/static/' % BASE_DIR
-
 CKEDITOR_UPLOAD_PATH = 'baidangs/'
 
 # Password validation
@@ -138,13 +132,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-import os
-
-
-
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -166,16 +154,3 @@ cloudinary.config(
     api_secret="sKhPxCraBaikLWgXkceg2nwZox8",
     secure=True
 )
-
-# OAUTH2_PROVIDER = {
-#     'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore',
-    # 'SCOPES': {
-    #     'read': 'Read access',
-    #     'write': 'Write access',
-    # },
-    # 'ACCESS_TOKEN_EXPIRE_SECONDS': 3600,  # Token hết hạn sau 1 giờ
-    # 'ALLOW_CLIENT_SECRET_POST': True,    # Cho phép gửi `client_secret` qua POST
-# }
-
-# CLIENT_ID = 'xM7SzMPKueVwgeyJwTTZXuvKWG70jjrDXjvhkK5v'
-# CLIENT_SECRET = '123456'

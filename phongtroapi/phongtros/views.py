@@ -16,7 +16,7 @@ from .serializers import (
 class UserViewSet(viewsets.ViewSet,
                    generics.ListAPIView,
                    generics.CreateAPIView,  #post
-                   generics.RetrieveAPIView):#get
+                   generics.RetrieveAPIView,):#get
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
     parser_classes = [MultiPartParser, FormParser]
@@ -31,6 +31,8 @@ class UserViewSet(viewsets.ViewSet,
     @action(methods=['get'], url_path='current-user', detail=False)
     def get_current_user(self, request):
         return Response(UserSerializer(request.user).data)
+
+    
 
     # def get_permissions(self):
     #     if self.action == 'retrieve':
