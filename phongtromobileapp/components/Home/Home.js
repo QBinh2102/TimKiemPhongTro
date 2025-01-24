@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, ScrollView } from "react-native";
 import { Avatar, ListItem } from "react-native-elements";
 import { Title, Subheading } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -71,7 +71,7 @@ const Home = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}> 
       <View style={styles.header}>
         <Text style={styles.title}>Bài đăng</Text>
         <Ionicons
@@ -130,7 +130,7 @@ const Home = () => {
           </ListItem>
         ))
       )}
-    </View>
+    </ScrollView>  
   );
 };
 
