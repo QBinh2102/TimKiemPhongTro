@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Button } from "react-native";
 import { MyUserContext, MyDispatchContext } from "../../configs/MyUserContext";  // Import context
+import axios from "axios";
 
 const TrangCaNhan = ({ route, navigation }) => {
   const { userId } = route.params;
@@ -27,49 +28,49 @@ const TrangCaNhan = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-  fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      setUserData(data);
-      setIsFollowing(userLogin.tuongTac.includes(data.id));  // Kiểm tra xem đã theo dõi chưa
-    })
-    .catch((error) => console.error("Error fetching user data:", error));
+    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setUserData(data);
+        setIsFollowing(userLogin.tuongTac.includes(data.id));  // Kiểm tra xem đã theo dõi chưa
+      })
+      .catch((error) => console.error("Error fetching user data:", error));
 
-  fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
-    .then((response) => response.json())
-    .then((data) => {
-      const filteredPosts = data.filter(post => post.nguoiDangBai === userId);
-      setUserPosts(filteredPosts);
-    })
-    .catch((error) => console.error("Error fetching user posts:", error));
-}, [userId, userLogin.tuongTac]);  // Đảm bảo cập nhật khi tuongTac thay đổi
-
+    fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
+      .then((response) => response.json())
+      .then((data) => {
+        const filteredPosts = data.filter(post => post.nguoiDangBai === userId);
+        setUserPosts(filteredPosts);
+      })
+      .catch((error) => console.error("Error fetching user posts:", error));
+  }, [userId, userLogin.tuongTac]);
 
   const handleFollow = () => {
     const updatedTuongTac = [...userLogin.tuongTac, userId];  // Thêm người dùng vào danh sách theo dõi
+    console.info(updatedTuongTac)
+    
+    const formData = new FormData();
   
-    // Cập nhật tuongTac của userLogin
-    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userLogin.id}/`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${userLogin.token}`,
-      },
-      body: JSON.stringify({
-        tuongTac: updatedTuongTac,
-      }),
+    // Append each ID to the 'tuongTac' field
+    updatedTuongTac.forEach(id => formData.append('tuongTac', id));
+
+    console.info(formData);
+
+    axios.patch(`https://toquocbinh2102.pythonanywhere.com/users/${userLogin.id}/`, 
+      formData, 
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer yourAccessToken`, // Thay thế bằng token nếu cần
+        },
+      }
+    )
+    .then((response) => {
+      console.log("Cập nhật thành công:", response.data);
     })
-      .then(response => response.json())
-      .then(() => {
-        // Cập nhật lại tuongTac trong context
-        dispatch({ type: 'UPDATE_TUONGTAC', payload: updatedTuongTac });
-  
-        // Kiểm tra sau khi dispatch
-        console.log("Updated tuongTac in context:", updatedTuongTac);
-  
-        setIsFollowing(true);
-      })
-      .catch(error => console.error("Error following user:", error));
+    .catch((error) => {
+      console.error("Lỗi khi cập nhật:", error);
+    });
   };
   
   const handleUnfollow = () => {

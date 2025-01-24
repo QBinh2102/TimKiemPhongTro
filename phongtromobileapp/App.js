@@ -141,13 +141,14 @@ const TabNavigator = ({ navigation }) => {
   );
 };
 
+// App chính
 export default function App() {
-  const [user, dispatch] = useReducer(MyUserReducers, null);  
+  const [user, dispatch] = useReducer(MyUserReducers, null);
 
   return (
     <NavigationContainer>
-      <MyUserContext.Provider value={user}> 
-        <MyDispatchContext.Provider value={dispatch}>  
+      <MyUserContext.Provider value={user}>
+        <MyDispatchContext.Provider value={dispatch}>
           <TabNavigator />
         </MyDispatchContext.Provider>
       </MyUserContext.Provider>
