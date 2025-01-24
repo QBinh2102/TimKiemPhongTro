@@ -51,7 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
 class User2(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','email', 'username', 'first_name', 'last_name', 'SDT', 'image','vaiTro','date_joined']
+        fields = ['id']
 
 
 # Serializer cho Tro
@@ -77,8 +77,7 @@ class TroDetailsSerializer(TroSerializer):
 
 # Serializer cho BaiDang
 class BaiDangSerializer(serializers.ModelSerializer):
-    # type = serializers.CharField(source='type', read_only=True)
-    nguoiDangBai = User2()
+
     class Meta:
         model = BaiDang
         fields = ['id', 'tieuDe', 'thongTin', 'nguoiDangBai', 'created_date', 'updated_date']

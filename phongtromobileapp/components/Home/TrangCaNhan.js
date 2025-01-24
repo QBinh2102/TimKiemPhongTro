@@ -25,15 +25,18 @@ const TrangCaNhan = ({ route, navigation }) => {
   };
 
   useEffect(() => {
+    // Lấy thông tin người dùng
     fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userId}`)
       .then((response) => response.json())
       .then((data) => setUserData(data))
       .catch((error) => console.error("Error fetching user data:", error));
 
+    // Lấy bài viết của người dùng, lọc theo nguoiDangBai.id
     fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
       .then((response) => response.json())
       .then((data) => {
-        const filteredPosts = data.filter(post => post.nguoiDangBai.id === userId);
+        // Lọc bài đăng theo nguoiDangBai.id
+        const filteredPosts = data.filter(post => post.nguoiDangBai === userId);
         setUserPosts(filteredPosts);
       })
       .catch((error) => console.error("Error fetching user posts:", error));

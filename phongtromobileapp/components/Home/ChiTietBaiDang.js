@@ -9,29 +9,38 @@ const ChiTietBaiDang = ({ route, navigation }) => {
   const { baiDang } = route.params;
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [users, setUsers] = useState([]);  // Lưu thông tin người dùng
+  const [users, setUsers] = useState([]);  
+  const [postOwner, setPostOwner] = useState(null);  // Lưu thông tin người đăng bài
 
   useEffect(() => {
-    // Lấy dữ liệu bình luận từ API
+    // Lấy bình luận của bài đăng
     fetch("https://toquocbinh2102.pythonanywhere.com/binhluans/")
       .then(response => response.json())
       .then(data => {
         const filteredComments = data.filter(comment => comment.baiDang === baiDang.id);
-        setComments(filteredComments.reverse()); // Đảo ngược thứ tự bình luận
+        setComments(filteredComments.reverse());
 
-        // Lấy thông tin người dùng từ các bình luận
+        // Lấy danh sách các user từ bình luận
         const userIds = filteredComments.map(comment => comment.nguoiBinhLuan);
         if (userIds.length > 0) {
           fetch(`https://toquocbinh2102.pythonanywhere.com/users/?ids=${userIds.join(",")}`)
             .then(response => response.json())
             .then(userData => {
-              setUsers(userData); // Lưu thông tin người dùng vào state
+              setUsers(userData);  // Lưu thông tin người dùng vào state
             })
             .catch(error => console.error("Lỗi khi lấy thông tin người dùng:", error));
         }
       })
       .catch(error => console.error("Lỗi khi lấy bình luận:", error));
-  }, [baiDang.id]);
+
+    // Lấy thông tin người đăng bài
+    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${baiDang.nguoiDangBai}`)
+      .then(response => response.json())
+      .then(userData => {
+        setPostOwner(userData);  // Lưu thông tin người đăng bài vào state
+      })
+      .catch(error => console.error("Lỗi khi lấy thông tin người đăng bài:", error));
+  }, [baiDang.id, baiDang.nguoiDangBai]);
 
   const handleCommentSubmit = () => {
     if (newComment.trim() === "") return;
@@ -44,12 +53,12 @@ const ChiTietBaiDang = ({ route, navigation }) => {
       body: JSON.stringify({
         baiDang: baiDang.id,
         thongTin: newComment,
-        nguoiBinhLuan: userLogin.id, // Use the logged-in user's ID
+        nguoiBinhLuan: userLogin.id, 
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        setComments([data, ...comments].reverse()); // Đảo ngược thứ tự bình luận sau khi gửi
+        setComments([data, ...comments].reverse());
         setNewComment("");
       })
       .catch((error) => console.error("Lỗi khi gửi bình luận:", error));
@@ -66,19 +75,23 @@ const ChiTietBaiDang = ({ route, navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.postHeader}>
-        <Avatar 
-          rounded 
-          size="medium" 
-          source={baiDang.nguoiDangBai.image ? { uri: baiDang.nguoiDangBai.image } : null} 
-          containerStyle={styles.avatar}
-        />
+        {postOwner && (
+          <Avatar 
+            rounded 
+            size="medium" 
+            source={postOwner.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${postOwner.image}` } : null}
+            containerStyle={styles.avatar}
+          />
+        )}
         <View style={styles.postInfo}>
-          <Text 
-            style={styles.username}
-            onPress={() => handleUserPress(baiDang.nguoiDangBai.id)} 
-          >
-            {baiDang.nguoiDangBai.last_name} {baiDang.nguoiDangBai.first_name}
-          </Text>
+          {postOwner && (
+            <Text 
+              style={styles.username}
+              onPress={() => handleUserPress(postOwner.id)} 
+            >
+              {postOwner.last_name} {postOwner.first_name}
+            </Text>
+          )}
           <Text style={styles.date}>{new Date(baiDang.created_date).toLocaleString("vi-VN")}</Text>
         </View>
         <Text style={styles.postTypeTag}>{baiDang.type === "Cho thuê" ? "Cho thuê" : "Tìm phòng"}</Text>
@@ -103,7 +116,7 @@ const ChiTietBaiDang = ({ route, navigation }) => {
       <View style={styles.commentList}>
         {comments.length > 0 ? (
           comments.map((comment) => {
-            const user = getUserInfo(comment.nguoiBinhLuan);  // Lấy thông tin người bình luận
+            const user = getUserInfo(comment.nguoiBinhLuan); 
             return (
               <View key={comment.id} style={styles.commentItem}>
                 <View style={styles.commentHeader}>
@@ -115,7 +128,7 @@ const ChiTietBaiDang = ({ route, navigation }) => {
                   />
                   <Text 
                     style={styles.commentUser}
-                    onPress={() => handleUserPress(user.id)} // Gọi hàm chuyển hướng khi bấm tên người dùng
+                    onPress={() => handleUserPress(user.id)} 
                   >
                     {user ? `${user.last_name} ${user.first_name}` : "Unknown"}
                   </Text>

@@ -16,17 +16,16 @@ const Profile = ({ route, navigation }) => {
   const logout = async () => {
     await AsyncStorage.removeItem("token");
     dispatch({
-      "type": "logout"
-    })
-  }
+      type: "logout"
+    });
+  };
 
   const getVaiTroName = (vaiTro) => {
-    if (vaiTro === 1) {
-      return "Quản trị viên";
-    } else if (vaiTro === 2) {
-      return "Chủ nhà trọ";
-    } else if (vaiTro === 3) {
-      return "Người thuê trọ";
+    switch (vaiTro) {
+      case 1: return "Quản trị viên";
+      case 2: return "Chủ nhà trọ";
+      case 3: return "Người thuê trọ";
+      default: return "Chưa xác định";
     }
   };
 
@@ -39,83 +38,64 @@ const Profile = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
-      .then((response) => response.json())
-      .then((data) => {
-        const filteredPosts = data.filter(post => post.nguoiDangBai.id === user.id);
-        setUserPosts(filteredPosts);
-      })
-      .catch((error) => console.error("Error fetching user posts:", error));
-  }, [user]);
-
- 
-
-  const handleAddPost = async () => {
-    if (newPostTitle.trim() && newPostContent.trim()) {
-      const postData = {
+    if (user) {
+      fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
+        .then((response) => response.json())
+        .then((data) => {
+          const filteredPosts = data.filter(post => post.nguoiDangBai === user.id);
+  
+          // Sort posts by created_date in descending order (newest first)
+          const sortedPosts = filteredPosts.sort((b, a) => new Date(b.created_date) - new Date(a.created_date));
+  
+          setUserPosts(sortedPosts);
+        })
+        .catch((error) => console.error("Error fetching user posts:", error));
+    }
+  }, [user]); // Re-run when user changes
+  
+  const handleAddPost = () => {
+    if (newPostTitle.trim() === "" || newPostContent.trim() === "") {
+      alert('Vui lòng điền đủ tiêu đề và nội dung bài đăng!');
+      return;
+    }
+  
+    // Send POST request to server
+    fetch("https://toquocbinh2102.pythonanywhere.com/baidangs/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         tieuDe: newPostTitle,
         thongTin: newPostContent,
-        nguoiDangBai: {
-          id: user.id,  // Gửi id người dùng, không gửi lại username
-        },
-      };
-  
-      try {
-        // Lấy thông tin người dùng từ API /users/
-        const userResponse = await fetch(`https://toquocbinh2102.pythonanywhere.com/users/${user.id}`);
-        const userData = await userResponse.json();
-  
-        if (userData) {
-          postData.nguoiDangBai = {
-            id: userData.id,
-            first_name: userData.first_name,
-            last_name: userData.last_name,
-            SDT: userData.SDT,
-            email: userData.email,
-            vaiTro: userData.vaiTro,
-            date_joined: userData.date_joined,
-            image: userData.image,
-          };
-  
-          // Gửi yêu cầu POST để tạo bài đăng mới
-          const postResponse = await fetch('https://toquocbinh2102.pythonanywhere.com/baidangs/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(postData),
-          });
-  
-          if (postResponse.ok) {
-            const newPost = await postResponse.json();
-            setUserPosts([newPost, ...userPosts]);
-            setNewPostTitle('');
-            setNewPostContent('');
-          } else {
-            const errorData = await postResponse.json();
-            console.error('API Error:', errorData);
-            alert('Không thể đăng bài. Vui lòng thử lại!');
-          }
-        } else {
-          alert('Không tìm thấy thông tin người dùng.');
+        nguoiDangBai: user.id,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Lỗi từ server: ' + response.status);
         }
-      } catch (error) {
-        console.error('Error posting new content:', error);
-        alert('Không thể đăng bài. Vui lòng thử lại!');
-      }
-    } else {
-      alert('Vui lòng điền đủ tiêu đề và nội dung bài đăng!');
-    }
+        return response.json();
+      })
+      .then((data) => {
+        setUserPosts((prevPosts) => [data, ...prevPosts]);
+        setNewPostTitle("");
+        setNewPostContent("");
+      })
+      .catch((error) => {
+        console.error("Lỗi khi đăng bài:", error);
+        alert("Đã có lỗi xảy ra khi đăng bài. Mã lỗi: " + error.message);
+      });
   };
   
-
+  
   return (
     <ScrollView style={styles.container}>
       {user ? (
         <>
           <View style={styles.profileHeader}>
             <Image
-              source={user && user.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${user.image}` } : null}
+              source={user.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${user.image}` } : null}
               style={styles.profileImage}
             />
             <View style={styles.profileInfo}>
@@ -131,10 +111,10 @@ const Profile = ({ route, navigation }) => {
             <Text style={styles.contactText}>Số điện thoại: {user.SDT}</Text>
             <Text style={styles.contactText}>Email: {user.email}</Text>
             <Text style={styles.contactText}>Vai trò: {getVaiTroName(user.vaiTro)}</Text>
-            <Text style={styles.contactText}>Ngày tham gia: {formatDate(user.date_joined)}</Text> 
+            <Text style={styles.contactText}>Ngày tham gia: {formatDate(user.date_joined)}</Text>
           </View>
 
-          <Text style={styles.postsTitle}>Bài viết của {user.first_name}:</Text>
+          
 
           {/* Form thêm bài đăng */}
           {user.vaiTro === 3 && (
@@ -155,7 +135,7 @@ const Profile = ({ route, navigation }) => {
               <Button mode="contained" onPress={handleAddPost}>Đăng bài</Button>
             </View>
           )}
-
+        <Text style={styles.postsTitle}>Bài viết của {user.first_name}:</Text>
           {userPosts.length > 0 ? (
             userPosts.slice().reverse().map((post) => (
               <TouchableOpacity
