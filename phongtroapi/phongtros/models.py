@@ -1,5 +1,5 @@
 from django.db import models
-from ckeditor.fields import RichTextField
+# from ckeditor.fields import RichTextField
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Model
 from vi_address.models import City, District, Ward
@@ -18,7 +18,7 @@ class VaiTro(IntEnum):
 class User(AbstractUser):
     SDT = models.CharField(max_length=10)
     # image = CloudinaryField('avatar', null=True)
-    image = models.ImageField(upload_to='media/nguoidungs/%Y/%m/')
+    image = models.ImageField(upload_to='media/nguoidungs/%Y/%m/', null=True)
     vaiTro = models.IntegerField(choices=VaiTro.choices(), default=VaiTro.QUANTRIVIEN)
     tuongTac = models.ManyToManyField("self", symmetrical=False, related_name="tuong_tac")
 
@@ -62,7 +62,8 @@ class Tro(BaseModel):
 class BaiDang(BaseModel):
     tieuDe = models.CharField(max_length=255)
     updated_date = models.DateTimeField(auto_now=True)
-    thongTin = RichTextField()
+    # thongTin = RichTextField()
+    thongTin=models.CharField(max_length=1000)
     nguoiDangBai = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -70,6 +71,11 @@ class BaiDang(BaseModel):
 
     class Meta:
         verbose_name_plural = 'Bài đăng'
+
+    def get_type(self, obj):
+        if isinstance(obj, BaiDangChoThue):
+            return "Cho thuê"
+        return "Tìm phòng"
 
 class BaiDangChoThue(BaiDang):
     troChoThue = models.ForeignKey(Tro, on_delete=models.CASCADE)

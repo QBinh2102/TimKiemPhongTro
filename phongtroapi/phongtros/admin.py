@@ -90,8 +90,8 @@ class CustomAnhTroInline(admin.TabularInline):
     readonly_fields = ['image']
     can_delete = False
 
-    def has_add_permission(self, request, obj):
-        return False
+    # def has_add_permission(self, request, obj):
+    #     return False
 
     def image(self, anhTro):
         return mark_safe(f'<img src="/static/{anhTro.anh.name}" width="150" />')
@@ -108,10 +108,10 @@ class TroAdmin(admin.ModelAdmin):
     list_display = ['tenTro', 'diaChi', 'phuong', 'quan', 'thanh_pho', 'soNguoiO', 'gia', 'nguoiChoThue', 'active']
     search_fields = ['tenTro']
     list_filter = ['gia']
-    readonly_fields = ['tenTro', 'diaChi', 'phuong', 'quan', 'thanh_pho', 'soNguoiO', 'gia', 'nguoiChoThue']
+    # readonly_fields = ['tenTro', 'diaChi', 'phuong', 'quan', 'thanh_pho', 'soNguoiO', 'gia', 'nguoiChoThue']
 
-    def has_add_permission(self, request):
-        return False
+    # def has_add_permission(self, request):
+    #     return False
 
 # --
 class CustomBinhLuanInline(admin.TabularInline):
@@ -120,9 +120,9 @@ class CustomBinhLuanInline(admin.TabularInline):
     verbose_name_plural = "Danh sách bình luận"
     can_delete = False
     readonly_fields = ['nguoiBinhLuan', 'thongTin']
-
-    def has_add_permission(self, request, obj):
-        return False
+    #
+    # def has_add_permission(self, request, obj):
+    #     return False
 
     def get_queryset(self, request):
         bl = super().get_queryset(request)
@@ -132,8 +132,8 @@ class CustomBinhLuanInline(admin.TabularInline):
         return bl
 
 class BaiDangForm(forms.ModelForm):
-    thongTin = forms.CharField(widget=CKEditorUploadingWidget)
-
+    # thongTin = forms.CharField(widget=CKEditorUploadingWidget)
+    thongTin = forms.CharField()
     class Meta:
         model = BaiDang
         fields = '__all__'
@@ -148,9 +148,9 @@ class BaiDangAdmin(admin.ModelAdmin):
     search_fields = ['tieuDe']
     list_filter = ['created_date', 'nguoiDangBai']
     form = BaiDangForm
-
-    def has_add_permission(self, request):
-        return False
+    #
+    # def has_add_permission(self, request):
+    #     return False
 
     def get_queryset(self, request):
         # Lọc chỉ các bài đăng thuộc lớp BaiDang, không bao gồm các lớp con
@@ -172,8 +172,8 @@ class BaiDangChoThueAdmin(admin.ModelAdmin):
     list_filter = ['created_date', 'nguoiDangBai']
     form = BaiDangChoThueForm
 
-    def has_add_permission(self, request):
-        return False
+    # def has_add_permission(self, request):
+    #     return False
 
 admin_site = MyTroAdmin()
 
@@ -182,7 +182,7 @@ admin_site.register(User,UserAdmin)
 admin_site.register(Tro,TroAdmin)
 admin_site.register(BaiDang,BaiDangAdmin)
 admin_site.register(BaiDangChoThue,BaiDangChoThueAdmin)
-# admin_site.register(BinhLuan)
+admin_site.register(BinhLuan)
 admin_site.register(City)
 admin_site.register(District)
 admin_site.register(Ward)

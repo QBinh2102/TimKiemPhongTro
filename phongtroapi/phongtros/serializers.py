@@ -8,32 +8,50 @@ class UserSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = User
-        fields = ['id','password','email', 'username', 'first_name', 'last_name', 'SDT', 'image', 'vaiTro', 'tuongTac']
+        fields = ['id','password','email', 'username', 'first_name', 'last_name', 'SDT', 'image', 'vaiTro', 'tuongTac','date_joined']
         extra_kwargs={
             'password':{'write_only':'true'}
         }
     def create(self, validated_data):
 
+    # b 22/01
         tuong_tac_data = validated_data.pop('tuongTac', None)
-        password = validated_data.pop('password', None)
-
+        data = validated_data.copy()
+        u = User(**data)
+        u.set_password(u.password)
         if tuong_tac_data:
             tuong_tac_data = [int(pk) for pk in tuong_tac_data]
+            u.tuongTac.set(tuong_tac_data)
+        u.save()
 
-        user = User(**validated_data)
-        if password:
-            user.set_password(password)
-        user.save()
-        if tuong_tac_data:
-            user.tuongTac.set(tuong_tac_data)
+        return u
 
-        return user
+        # tuong_tac_data = validated_data.pop('tuongTac', None)
+        # password = validated_data.pop('password', None)
+
+        # if tuong_tac_data:
+        #     tuong_tac_data = [int(pk) for pk in tuong_tac_data]
+
+        # user = User(**validated_data)
+        # if password:
+        #     user.set_password(password)
+        # user.save()
+        # if tuong_tac_data:
+        #     user.tuongTac.set(tuong_tac_data)
+
+        # return user
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['image'] = instance.image.url if instance.image else ''
+        return data
+    # b
 
 
 class User2(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','email', 'username', 'first_name', 'last_name', 'SDT']
+        fields = ['id','email', 'username', 'first_name', 'last_name', 'SDT', 'image','vaiTro','date_joined']
 
 
 # Serializer cho Tro
@@ -59,6 +77,7 @@ class TroDetailsSerializer(TroSerializer):
 
 # Serializer cho BaiDang
 class BaiDangSerializer(serializers.ModelSerializer):
+    # type = serializers.CharField(source='type', read_only=True)
     nguoiDangBai = User2()
     class Meta:
         model = BaiDang
