@@ -20,6 +20,35 @@ import { MyDispatchContext, MyUserContext } from './configs/MyUserContext';
 import MyUserReducers from './configs/MyUserReducers';
 import Profile from './components/User/Profile';
 
+// Firebase
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth'; // Authentication
+import { getDatabase } from 'firebase/database'; // Realtime Database
+import { getAnalytics } from 'firebase/analytics';
+
+// Cấu hình Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAjAiJfAaclDPjK2B5M9sBUud4phIpb9ow",
+  authDomain: "timkiemphongtro-e5cc6.firebaseapp.com",
+  databaseURL: "https://timkiemphongtro-e5cc6-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "timkiemphongtro-e5cc6",
+  storageBucket: "timkiemphongtro-e5cc6.firebasestorage.app",
+  messagingSenderId: "525846725068",
+  appId: "1:525846725068:web:40fc4d5ac6dc81a2de5d69",
+  measurementId: "G-42YYX7KCNB"
+};
+
+// Khởi tạo Firebase
+const app = initializeApp(firebaseConfig);
+
+// Khởi tạo các dịch vụ Firebase mà bạn cần
+const auth = getAuth(app); // Authentication
+const database = getDatabase(app); // Realtime Database
+const analytics = getAnalytics(app); // Analytics (nếu bạn cần)
+
+export { app, auth, database, analytics };
+
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 

@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Button, ScrollView, Alert } from "react-native";
 import { Avatar, ListItem } from "react-native-elements";
 import { Title, Subheading } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from 'react-native-vector-icons';  
 import APIs, { endpoints } from "../../configs/APIs";
+
+import { getDatabase, ref, set } from "firebase/database";
+
+// Ghi dữ liệu vào realtime database
+const guiDuLieu = () => {
+  const db = getDatabase();
+  set(ref(db, "Địa chỉ gửi lên"), {tenBien: "Giá trị gửi lên"});
+}
 
 const Home = () => {
   const [baidangs, setBaidangs] = useState([]);
@@ -73,6 +81,11 @@ const Home = () => {
   return (
     <ScrollView style={styles.container}> 
       <View style={styles.header}>
+        <Button
+          onPress={guiDuLieu()}
+          title="Test firebase"
+          color="#841584"
+        />
         <Text style={styles.title}>Bài đăng</Text>
         <Ionicons
           name="search"
