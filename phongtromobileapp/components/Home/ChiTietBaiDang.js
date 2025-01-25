@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Button } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Button, Alert, TouchableOpacity } from "react-native";
 import { Avatar } from "react-native-elements";
 import { Subheading } from "react-native-paper";
 import { MyUserContext } from "../../configs/MyUserContext";
@@ -13,14 +13,12 @@ const ChiTietBaiDang = ({ route, navigation }) => {
   const [postOwner, setPostOwner] = useState(null);  
 
   useEffect(() => {
-  
     fetch("https://toquocbinh2102.pythonanywhere.com/binhluans/")
       .then(response => response.json())
       .then(data => {
         const filteredComments = data.filter(comment => comment.baiDang === baiDang.id);
         setComments(filteredComments.reverse());
 
-        
         const userIds = filteredComments.map(comment => comment.nguoiBinhLuan);
         if (userIds.length > 0) {
           fetch(`https://toquocbinh2102.pythonanywhere.com/users/?ids=${userIds.join(",")}`)
@@ -33,7 +31,6 @@ const ChiTietBaiDang = ({ route, navigation }) => {
       })
       .catch(error => console.error("Lỗi khi lấy bình luận:", error));
 
-   
     fetch(`https://toquocbinh2102.pythonanywhere.com/users/${baiDang.nguoiDangBai}`)
       .then(response => response.json())
       .then(userData => {
@@ -76,6 +73,32 @@ const ChiTietBaiDang = ({ route, navigation }) => {
     }
   };
 
+  const handleDeletePost = () => {
+    Alert.alert(
+      "Xóa bài đăng",
+      "Bạn có chắc chắn muốn xóa bài đăng này không?",
+      [
+        { text: "Hủy", style: "cancel" },
+        { 
+          text: "Xóa", 
+          onPress: () => {
+            fetch(`https://toquocbinh2102.pythonanywhere.com/baidangchothues/${baiDang.id}/`, {
+              method: "DELETE",
+            })
+              .then(() => {
+                alert("Bài đăng đã được xóa thành công!");
+                navigation.goBack();  
+              })
+              .catch((error) => {
+                console.error("Lỗi khi xóa bài đăng:", error);
+                alert("Có lỗi xảy ra khi xóa bài đăng.");
+              });
+          }
+        },
+      ]
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.postHeader}>
@@ -98,7 +121,12 @@ const ChiTietBaiDang = ({ route, navigation }) => {
           )}
           <Text style={styles.date}>{new Date(baiDang.created_date).toLocaleString("vi-VN")}</Text>
         </View>
-        <Text style={styles.postTypeTag}>{baiDang.type === "Cho thuê" ? "Cho thuê" : "Tìm phòng"}</Text>
+       
+        {baiDang.nguoiDangBai === userLogin.id && (
+          <TouchableOpacity onPress={handleDeletePost} style={styles.deleteButton}>
+            <Text style={styles.deleteButtonText}>Xóa</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.contentBox}>
@@ -260,6 +288,18 @@ const styles = StyleSheet.create({
     color: "#888",
     textAlign: "center",
     marginTop: 20,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    backgroundColor: "#ff0000",
+    padding: 10,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 
