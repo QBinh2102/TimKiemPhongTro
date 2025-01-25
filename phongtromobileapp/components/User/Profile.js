@@ -6,6 +6,7 @@ import { Button } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
 
+
 const Profile = ({ route, navigation }) => {
   const user = useContext(MyUserContext);
   const [userPosts, setUserPosts] = useState([]);
@@ -44,14 +45,14 @@ const Profile = ({ route, navigation }) => {
         .then((data) => {
           const filteredPosts = data.filter(post => post.nguoiDangBai === user.id);
   
-          // Sort posts by created_date in descending order (newest first)
+        
           const sortedPosts = filteredPosts.sort((b, a) => new Date(b.created_date) - new Date(a.created_date));
   
           setUserPosts(sortedPosts);
         })
         .catch((error) => console.error("Error fetching user posts:", error));
     }
-  }, [user]); // Re-run when user changes
+  }, [user]); 
   
   const handleAddPost = () => {
     if (newPostTitle.trim() === "" || newPostContent.trim() === "") {
@@ -59,7 +60,7 @@ const Profile = ({ route, navigation }) => {
       return;
     }
   
-    // Send POST request to server
+  
     fetch("https://toquocbinh2102.pythonanywhere.com/baidangs/", {
       method: "POST",
       headers: {
@@ -87,8 +88,7 @@ const Profile = ({ route, navigation }) => {
         alert("Đã có lỗi xảy ra khi đăng bài. Mã lỗi: " + error.message);
       });
   };
-  
-  
+
   return (
     <ScrollView style={styles.container}>
       {user ? (
@@ -114,9 +114,16 @@ const Profile = ({ route, navigation }) => {
             <Text style={styles.contactText}>Ngày tham gia: {formatDate(user.date_joined)}</Text>
           </View>
 
-          
+         
+          {user.vaiTro === 2 && (
+            <View style={styles.manageTroContainer}>
+              <Button mode="contained" onPress={() => navigation.navigate('QuanLyTro')}>
+                Quản lý trọ
+              </Button>
+            </View>
+          )}
 
-          {/* Form thêm bài đăng */}
+       
           {user.vaiTro === 3 && (
             <View style={styles.addPostForm}>
               <TextInput
@@ -135,7 +142,8 @@ const Profile = ({ route, navigation }) => {
               <Button mode="contained" onPress={handleAddPost}>Đăng bài</Button>
             </View>
           )}
-        <Text style={styles.postsTitle}>Bài viết của {user.first_name}:</Text>
+
+          <Text style={styles.postsTitle}>Bài viết của {user.first_name}:</Text>
           {userPosts.length > 0 ? (
             userPosts.slice().reverse().map((post) => (
               <TouchableOpacity
@@ -228,6 +236,9 @@ const styles = StyleSheet.create({
     color: "#888",
     marginTop: 5,
   },
+  manageTroContainer: {
+    marginTop: 20,
+  },
   postsTitle: {
     fontSize: 18,
     fontWeight: "bold",
@@ -265,41 +276,28 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
     paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 10,
-    padding: 10,
+    paddingTop: 10,
   },
   postTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#333",
+    color: "#0288d1",
+  },
+  postDate: {
+    fontSize: 14,
+    color: "#888",
   },
   postContent: {
     marginTop: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: "#fff",
-    borderRadius: 5,
   },
   postInfo: {
     fontSize: 14,
     color: "#555",
-    marginTop: 5,
-    lineHeight: 20,
-  },
-  postDate: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 5,
   },
   noPostsText: {
-    fontSize: 16,
     color: "#888",
-    marginTop: 20,
-    textAlign: "center",
     fontStyle: "italic",
+    marginTop: 20,
   },
 });
 

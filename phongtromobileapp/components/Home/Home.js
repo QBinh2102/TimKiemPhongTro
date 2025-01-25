@@ -8,7 +8,7 @@ import APIs, { endpoints } from "../../configs/APIs";
 
 import { getDatabase, ref, set } from "firebase/database";
 
-// Ghi dữ liệu vào realtime database
+
 const guiDuLieu = () => {
   const db = getDatabase();
   set(ref(db, "Địa chỉ gửi lên"), {tenBien: "Giá trị gửi lên"});
@@ -18,15 +18,15 @@ const Home = () => {
   const [baidangs, setBaidangs] = useState([]);
   const [filteredBaidangs, setFilteredBaidangs] = useState([]);
   const [filterType, setFilterType] = useState('');
-  const [users, setUsers] = useState({});  // State để lưu thông tin người dùng
+  const [users, setUsers] = useState({});  
   const navigation = useNavigation();
 
   const loadBaidangs = async () => {
     try {
       const res = await APIs.get(endpoints["baidangs"]);
-      const reversedData = res.data.reverse();  // Đảo ngược thứ tự để bài đăng mới nhất ở trên
+      const reversedData = res.data.reverse();  
 
-      // Tạo một đối tượng lưu thông tin người dùng (cache)
+     
       const usersData = {};
       for (const baiDang of reversedData) {
         if (!usersData[baiDang.nguoiDangBai]) {
@@ -36,8 +36,8 @@ const Home = () => {
       }
 
       setBaidangs(reversedData);
-      setFilteredBaidangs(reversedData); // Mặc định hiển thị tất cả bài đăng
-      setUsers(usersData);  // Lưu thông tin người dùng vào state
+      setFilteredBaidangs(reversedData); 
+      setUsers(usersData);  
     } catch (error) {
       console.error("Error loading posts:", error);
     }

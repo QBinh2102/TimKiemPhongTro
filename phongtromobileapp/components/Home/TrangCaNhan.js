@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Button } from "react-native";
-import { MyUserContext, MyDispatchContext } from "../../configs/MyUserContext";  // Import context
+import { MyUserContext, MyDispatchContext } from "../../configs/MyUserContext";  
 import axios from "axios";
 
 const TrangCaNhan = ({ route, navigation }) => {
   const { userId } = route.params;
-  const userLogin = useContext(MyUserContext);  // Lấy thông tin người dùng đăng nhập
-  const dispatch = useContext(MyDispatchContext);  // Lấy dispatch để cập nhật dữ liệu người dùng
+  const userLogin = useContext(MyUserContext);  
+  const dispatch = useContext(MyDispatchContext); 
   const [userData, setUserData] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // Hàm lấy vai trò của người dùng
+
   const getVaiTroName = (vaiTro) => {
     if (vaiTro === 1) return "Quản trị viên";
     else if (vaiTro === 2) return "Chủ nhà trọ";
     else if (vaiTro === 3) return "Người thuê trọ";
   };
 
-  // Hàm định dạng ngày tháng
+  
   const formatDate = (date) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -32,7 +32,7 @@ const TrangCaNhan = ({ route, navigation }) => {
       .then((response) => response.json())
       .then((data) => {
         setUserData(data);
-        setIsFollowing(userLogin.tuongTac.includes(data.id));  // Kiểm tra xem đã theo dõi chưa
+        setIsFollowing(userLogin.tuongTac.includes(data.id));  
       })
       .catch((error) => console.error("Error fetching user data:", error));
 
@@ -46,12 +46,12 @@ const TrangCaNhan = ({ route, navigation }) => {
   }, [userId, userLogin.tuongTac]);
 
   const handleFollow = () => {
-    const updatedTuongTac = [...userLogin.tuongTac, userId];  // Thêm người dùng vào danh sách theo dõi
+    const updatedTuongTac = [...userLogin.tuongTac, userId];  
     console.info(updatedTuongTac)
     
     const formData = new FormData();
   
-    // Append each ID to the 'tuongTac' field
+   
     updatedTuongTac.forEach(id => formData.append('tuongTac', id));
 
     console.info(formData);
@@ -61,7 +61,7 @@ const TrangCaNhan = ({ route, navigation }) => {
       {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer yourAccessToken`, // Thay thế bằng token nếu cần
+          'Authorization': `Bearer yourAccessToken`,
         },
       }
     )
@@ -74,7 +74,7 @@ const TrangCaNhan = ({ route, navigation }) => {
   };
   
   const handleUnfollow = () => {
-    const updatedTuongTac = userLogin.tuongTac.filter(item => item !== userId);  // Lọc bỏ người dùng khỏi danh sách theo dõi
+    const updatedTuongTac = userLogin.tuongTac.filter(item => item !== userId);  
   
     fetch(`https://toquocbinh2102.pythonanywhere.com/users/${userLogin.id}/`, {
       method: 'PATCH',
@@ -88,10 +88,10 @@ const TrangCaNhan = ({ route, navigation }) => {
     })
       .then(response => response.json())
       .then(() => {
-        // Cập nhật lại tuongTac trong context
+    
         dispatch({ type: 'UPDATE_TUONGTAC', payload: updatedTuongTac });
   
-        // Kiểm tra sau khi dispatch
+        
         console.log("Updated tuongTac in context:", updatedTuongTac);
   
         setIsFollowing(false);
@@ -124,7 +124,7 @@ const TrangCaNhan = ({ route, navigation }) => {
             <Text style={styles.contactText}>Ngày tham gia: {formatDate(userData.date_joined)}</Text>
           </View>
 
-          {/* Nút Follow / Hủy theo dõi */}
+       
           {userLogin.id !== userId && (
             <View style={styles.followButtonContainer}>
               {isFollowing ? (

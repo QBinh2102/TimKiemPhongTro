@@ -15,6 +15,10 @@ import TimNguoiKhac from "./components/Home/TimNguoiKhac";
 import ChiTietBaiDang from "./components/Home/ChiTietBaiDang";
 import TrangCaNhan from "./components/Home/TrangCaNhan";
 
+import QuanLyTro from "./components/Home/QuanLyTro"; 
+import ThemTro from "./components/Home/ThemTro"; 
+import ChiTietTro from "./components/Home/ChiTietTro"; 
+
 // Import context và reducer
 import { MyDispatchContext, MyUserContext } from './configs/MyUserContext';
 import MyUserReducers from './configs/MyUserReducers';
@@ -75,6 +79,22 @@ const HomeStackNavigator = () => {
         component={TrangCaNhan}
         options={{ title: "Trang cá nhân" }}
       />
+      <Stack.Screen
+        name="QuanLyTro"
+        component={QuanLyTro}
+        options={{ title: "Quản lý trọ" }}
+      />
+      <Stack.Screen
+        name="ThemTro"
+        component={ThemTro}
+        options={{ title: "Thêm trọ" }}
+      />
+      <Stack.Screen
+        name="ChiTietTro"
+        component={ChiTietTro}
+        options={{ title: "Chi tiết trọ" }}
+      />
+
     </Stack.Navigator>
   );
 };
@@ -97,6 +117,22 @@ const ProfileStackNavigator = () => {
         component={TrangCaNhan}
         options={{ title: "Trang cá nhân" }}
       />
+       <Stack.Screen
+        name="QuanLyTro"
+        component={QuanLyTro}
+        options={{ title: "Quản lý trọ" }}
+      />
+      <Stack.Screen
+        name="ThemTro"
+        component={ThemTro}
+        options={{ title: "Thêm trọ" }}
+      />
+      <Stack.Screen
+        name="ChiTietTro"
+        component={ChiTietTro}
+        options={{ title: "Chi tiết trọ" }}
+      />
+
     </Stack.Navigator>
   );
 };
