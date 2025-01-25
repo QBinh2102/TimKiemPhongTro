@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput } from "react-native";
 import { MyDispatchContext, MyUserContext } from "../../configs/MyUserContext";
 import MyStyles from "../../styles/MyStyles";
-import { Button } from "react-native-paper";
+import { Button, IconButton, Menu, Provider } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
 
@@ -89,7 +89,12 @@ const Profile = ({ route, navigation }) => {
       });
   };
 
+  const [visible, setVisible] = useState(false); // Điều khiển hiển thị menu
+  const showMenu = () => setVisible(true); // Hiển thị menu
+  const hideMenu = () => setVisible(false); // Ẩn menu
+
   return (
+    <Provider>
     <ScrollView style={styles.container}>
       {user ? (
         <>
@@ -104,6 +109,16 @@ const Profile = ({ route, navigation }) => {
               </Text>
               <Text style={styles.profileUsername}>@{user.username}</Text>
             </View>
+            <Menu
+              visible={visible}
+              onDismiss={hideMenu} // Khi ấn ngoài menu sẽ tắt
+              anchor={<IconButton icon="dots-vertical" size={24} onPress={showMenu} />} // Gắn menu vào icon ba chấm
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }} // Menu xuất hiện dưới nút ba chấm
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }} // Đảm bảo menu mở ra từ dưới nút ba chấm
+            >
+              {/* <Menu.Item onPress={goToInfo} title="Thông tin" /> */}
+              <Menu.Item onPress={logout} title="Đăng xuất" />
+            </Menu>
           </View>
 
           <View style={styles.contactInfo}>
@@ -172,6 +187,7 @@ const Profile = ({ route, navigation }) => {
         <Text>Đang tải thông tin người dùng...</Text>
       )}
     </ScrollView>
+    </Provider>
   );
 };
 

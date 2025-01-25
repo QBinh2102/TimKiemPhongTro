@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Alert, Image, KeyboardAvoidingView, Platform, Text, TouchableOpacity, View } from "react-native";
 import { Button, HelperText, RadioButton, TextInput  } from "react-native-paper";
 import MyStyles from "../../styles/MyStyles";
-import * as ImagePicker from 'expo-image-picker';
 import APIs, { endpoints } from "../../configs/APIs";
 import { useNavigation } from "@react-navigation/native";
-import { Input } from "react-native-elements";
-import { launchImageLibrary } from 'react-native-image-picker';
+import * as FileSystem from 'expo-file-system';
+import * as ImagePicker from 'expo-image-picker';
 
 const Register = () => {
     const [user, setUser] = useState({vaiTro:'3'});
@@ -52,41 +51,52 @@ const Register = () => {
     const nav = useNavigation();
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState(false);
+    const [images, setImages] = useState([]);
 
     const change = (value, field) => {
         setUser({...user, [field]: value});
     }
 
-    // const handleChange = (e) =>{
-    //     if([e.target.name] == "image"){
-    //         setPostImage({
-    //             image: e.target.file,
-    //         });
+    const handleImagePick = async () => {
+        try {
+          const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+          if (permissionResult.status !== 'granted') {
+            alert('Quyền truy cập ảnh bị từ chối');
+            return;
+          }
+    
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+          });
+    
+          if (!result.canceled) {
+            const imageUri = result.assets[0].uri;
+            const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
+            setImages([{ ...result.assets[0], base64 }]);
+          } else {
+            console.log('Chọn ảnh bị hủy bỏ');
+          }
+        } catch (error) {
+          console.error('Error picking image:', error);
+        }
+    };
+    // const pickImage = async () => {
+    //     let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    //     if (status !== 'granted') {
+    //         alert("Permissions denied!");
+    //     } else {
+    //         const result = await ImagePicker.launchImageLibraryAsync();
+    //         if (!result.canceled){
+    //             const imageUri = result.assets[0].uri;
+    //             const base64 = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
+    //             // setImages([{ ...result.assets[0], base64 }]);
+    //             setAvatar(result.assets[0],base64);
+    //         }
     //     }
     // }
-
-    const pickImage = async () => {
-        let { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (status !== 'granted') {
-            alert("Permissions denied!");
-        } else {
-            const result = await ImagePicker.launchImageLibraryAsync();
-            if (!result.canceled)
-                change(result.assets[0], 'image');
-        }
-    }
-
-    const convertUriToFile = async (uri, fileName) => {
-    try {
-        const response = await fetch(uri);  // Fetch file from URI
-        const blob = await response.blob(); // Convert to Blob
-        const file = new File([blob], fileName, { type: blob.type });  // Convert Blob to File
-        return file;
-    } catch (error) {
-        console.error("Error converting URI to File:", error);
-    }
-};
 
     const register = async () => {
         if (user.password !== user.confirm)
@@ -94,31 +104,20 @@ const Register = () => {
         else {
             setErr(false);
             let form = new FormData();
-            // for (let key in user)
-            //     if (key !== 'confirm') {
-            //         if (key === 'image') {
-            //             form.append('image', {
-                        //     uri: user.image.uri,
-                        //     name: user.image.fileName || 'image.jpg',
-                        //     type: user.image.type || 'image/jpeg',
-                        // })
-            //         } else
-            //         form.append(key, user[key]);
-            //     }
-            console.info(user.image.uri)
-            console.info(user.image.name)
-            console.info(user.image.type)
-            if (user.image) {
-                form.append('image', {
-                    uri: user.image.uri,
-                    name: user.image.fileName || 'image.jpg',
-                    type: user.image.type || 'image/jpeg',
-                })
-            }
             for (let key in user)
-                if (key !== 'confirm'&&key!=='image') {
+                if (key !== 'confirm') {
                     form.append(key, user[key]);
                 }
+
+            const image = images[0];
+            const imageName = image.fileName || `image.jpg`; 
+            const imageType = "image/jpeg";
+
+            form.append('image', {
+            uri: image.uri,
+            type: imageType,
+            name: imageName,
+            });
 
             console.info(form);
             try {
@@ -132,7 +131,13 @@ const Register = () => {
                 Alert.alert("Đăng ký thành công, mời bạn đăng nhập")
                 nav.navigate("Login");
             } catch (ex) {
-                console.error(JSON.stringify(ex));
+                // console.error("Lỗi trong quá trình gửi yêu cầu: ", ex);
+                // // Kiểm tra thông tin lỗi chi tiết
+                // if (ex.response) {
+                //     console.error("Lỗi từ server: ", ex.response.data);
+                // } else {
+                //     console.error("Lỗi mạng hoặc cấu hình: ", ex.message);
+                // }
             } finally {
                 setLoading(false);
             }
@@ -168,10 +173,12 @@ const Register = () => {
                     <Text>NGUOITHUETRO (Người thuê trọ)</Text>
                 </View>
 
-                <TouchableOpacity onPress={pickImage}>
+                <TouchableOpacity onPress={handleImagePick}>
                     <Text style={MyStyles.margin}>Chọn ảnh đại diện...</Text>
                 </TouchableOpacity>
-                {user.image ? <Image source={{ uri: user.image.uri }} style={{ width: 100, height: 100 }} /> : ""}
+                {images.map((image, index) => (
+                          <Image key={index} source={{ uri: image.uri }} style={{ width: 100, height: 100 }} />
+                        ))}
 
 
                 <Button loading={loading} mode="contained" onPress={register}>ĐĂNG KÝ</Button>

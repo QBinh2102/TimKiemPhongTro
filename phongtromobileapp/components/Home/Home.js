@@ -8,12 +8,6 @@ import APIs, { endpoints } from "../../configs/APIs";
 
 import { getDatabase, ref, set } from "firebase/database";
 
-
-const guiDuLieu = () => {
-  const db = getDatabase();
-  set(ref(db, "Địa chỉ gửi lên"), {tenBien: "Giá trị gửi lên"});
-}
-
 const Home = () => {
   const [baidangs, setBaidangs] = useState([]);
   const [filteredBaidangs, setFilteredBaidangs] = useState([]);
@@ -26,7 +20,6 @@ const Home = () => {
       const res = await APIs.get(endpoints["baidangs"]);
       const reversedData = res.data.reverse();  
 
-     
       const usersData = {};
       for (const baiDang of reversedData) {
         if (!usersData[baiDang.nguoiDangBai]) {
@@ -50,11 +43,14 @@ const Home = () => {
   useEffect(() => {
     if (filterType) {
       const filtered = baidangs.filter(b => {
+        const user = users[b.nguoiDangBai];
+        if (!user || !user.vaiTro) return false;
+        
         if (filterType === "Tìm phòng") {
-          return b.nguoiDangBai.vaiTro === 3;
+          return user.vaiTro === 3;  
         }
         if (filterType === "Cho thuê") {
-          return b.nguoiDangBai.vaiTro === 2;
+          return user.vaiTro === 2;  
         }
         return false;
       });
@@ -62,7 +58,7 @@ const Home = () => {
     } else {
       setFilteredBaidangs(baidangs);
     }
-  }, [filterType, baidangs]);
+  }, [filterType, baidangs, users]);
 
   const getTagByVaiTro = (vaiTro) => {
     if (vaiTro === 1) return "Quản trị viên";
@@ -82,9 +78,9 @@ const Home = () => {
     <ScrollView style={styles.container}> 
       <View style={styles.header}>
         <Button
-          onPress={guiDuLieu()}
-          title="Test firebase"
-          color="#841584"
+          onPress={() => navigation.navigate("TimTro")}  
+          title="Tìm Trọ" 
+          color="#0288d1"  
         />
         <Text style={styles.title}>Bài đăng</Text>
         <Ionicons

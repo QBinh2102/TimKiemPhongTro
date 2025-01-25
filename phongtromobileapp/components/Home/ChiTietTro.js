@@ -217,14 +217,20 @@ const ChiTietTro = ({ route, navigation }) => {
       </ScrollView>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-          <Text style={styles.buttonText}>Xóa trọ</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.advertiseButton} onPress={() => setAdvertiseModalVisible(true)}>
-          <Text style={styles.buttonText}>Đăng bài cho thuê</Text>
-        </TouchableOpacity>
-      </View>
+
+  {userLogin.id === tro.nguoiChoThue && (
+    <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+      <Text style={styles.buttonText}>Xóa trọ</Text>
+    </TouchableOpacity>
+  )}
+  
+  
+  {userLogin.id === tro.nguoiChoThue && (
+    <TouchableOpacity style={styles.advertiseButton} onPress={() => setAdvertiseModalVisible(true)}>
+      <Text style={styles.buttonText}>Đăng bài cho thuê</Text>
+    </TouchableOpacity>
+  )}
+</View>
 
       
       <Modal

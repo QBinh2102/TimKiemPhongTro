@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput, Button, Alert, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TextInput, Button, Alert, TouchableOpacity, Image } from "react-native";
 import { Avatar } from "react-native-elements";
 import { Subheading } from "react-native-paper";
+import Modal from "react-native-modal";  // Import modal từ react-native-modal
 import { MyUserContext } from "../../configs/MyUserContext";
 
 const ChiTietBaiDang = ({ route, navigation }) => {
@@ -9,10 +10,56 @@ const ChiTietBaiDang = ({ route, navigation }) => {
   const { baiDang } = route.params;
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [users, setUsers] = useState([]);  
-  const [postOwner, setPostOwner] = useState(null);  
+  const [users, setUsers] = useState([]);
+  const [postOwner, setPostOwner] = useState(null);
+  const [tro, setTro] = useState(null);  // State để lưu thông tin trọ
+  const [images, setImages] = useState([]);  // State để lưu danh sách ảnh
+  const [isModalVisible, setIsModalVisible] = useState(false); // State để quản lý trạng thái modal
+  const [selectedImage, setSelectedImage] = useState(null); // State lưu ảnh được chọn
 
   useEffect(() => {
+    // Lấy thông tin người đăng bài
+    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${baiDang.nguoiDangBai}`)
+      .then(response => response.json())
+      .then(userData => {
+        setPostOwner(userData);
+
+        if (userData.vaiTro === 2) {
+          fetch(`https://toquocbinh2102.pythonanywhere.com/baidangchothues/${baiDang.id}/`)
+            .then(response => response.json())
+            .then(baiDangChoThueData => {
+              if (baiDangChoThueData.troChoThue !== null) {
+                fetch(`https://toquocbinh2102.pythonanywhere.com/tros/${baiDangChoThueData.troChoThue}`)
+                  .then(response => response.json())
+                  .then(troData => {
+                    setTro(troData);
+                    
+                    // Lấy ảnh liên quan đến trọ
+                    fetch("https://toquocbinh2102.pythonanywhere.com/anhtros/")
+                      .then(response => response.json())
+                      .then(anhTroData => {
+                        // Lọc ảnh theo mã trọ
+                        const imagesForTro = anhTroData.filter(image => image.tro === baiDangChoThueData.troChoThue);
+                        setImages(imagesForTro);  // Lưu danh sách ảnh vào state
+                      })
+                      .catch(error => console.error("Lỗi khi lấy thông tin ảnh trọ:", error));
+                  })
+                  .catch(error => console.error("Lỗi khi lấy thông tin trọ:", error));
+              }
+            })
+            .catch(error => console.error("Lỗi khi lấy thông tin bài đăng cho thuê:", error));
+        } else if (userData.vaiTro === 3) {
+          fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/${baiDang.id}`)
+            .then(response => response.json())
+            .then(baiDangData => {
+              setTro(null);
+            })
+            .catch(error => console.error("Lỗi khi lấy thông tin bài đăng:", error));
+        }
+      })
+      .catch(error => console.error("Lỗi khi lấy thông tin người đăng bài:", error));
+
+    // Lấy bình luận
     fetch("https://toquocbinh2102.pythonanywhere.com/binhluans/")
       .then(response => response.json())
       .then(data => {
@@ -31,12 +78,6 @@ const ChiTietBaiDang = ({ route, navigation }) => {
       })
       .catch(error => console.error("Lỗi khi lấy bình luận:", error));
 
-    fetch(`https://toquocbinh2102.pythonanywhere.com/users/${baiDang.nguoiDangBai}`)
-      .then(response => response.json())
-      .then(userData => {
-        setPostOwner(userData); 
-      })
-      .catch(error => console.error("Lỗi khi lấy thông tin người đăng bài:", error));
   }, [baiDang.id, baiDang.nguoiDangBai]);
 
   const handleCommentSubmit = () => {
@@ -99,6 +140,18 @@ const ChiTietBaiDang = ({ route, navigation }) => {
     );
   };
 
+  // Hàm mở modal và chọn ảnh
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsModalVisible(true);
+  };
+
+  // Hàm đóng modal
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setSelectedImage(null);
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.postHeader}>
@@ -133,6 +186,43 @@ const ChiTietBaiDang = ({ route, navigation }) => {
         <Subheading style={styles.subtitle}>{baiDang.tieuDe}</Subheading>
         <Text style={styles.content}>{baiDang.thongTin}</Text>
       </View>
+
+      {/* Hiển thị chi tiết trọ nếu có và vai trò người đăng bài là 2 */}
+      {tro && (
+        <View style={styles.troDetails}>
+          <Text style={styles.troTitle}>Chi tiết trọ cho thuê</Text>
+          <Text style={styles.troInfo}>Địa chỉ: {tro.diaChi}</Text>
+          <Text style={styles.troInfo}>Giá: {tro.gia} VND</Text>
+          <Text style={styles.troInfo}>Số người ở: {tro.soNguoiO}</Text>
+        </View>
+      )}
+
+      {/* Hiển thị ảnh liên quan đến trọ */}
+      {images.length > 0 && (
+        <View style={styles.imageGallery}>
+          {images.map((image) => (
+            <TouchableOpacity key={image.id} onPress={() => openModal(image.anh)}>
+              <Image
+                source={{ uri: image.anh }}
+                style={styles.image}
+              />
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Modal hiển thị ảnh khi người dùng nhấn vào ảnh */}
+      <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+        <View style={styles.modalContent}>
+          <Image
+            source={{ uri: selectedImage }}
+            style={styles.fullImage}
+          />
+          <TouchableOpacity onPress={closeModal} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Đóng</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
 
       <View style={styles.commentSection}>
         <TextInput
@@ -204,15 +294,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#888",
     marginTop: 5,
-  },
-  postTypeTag: {
-    fontSize: 14,
-    color: "#fff",
-    backgroundColor: "#0288d1",
-    padding: 5,
-    borderRadius: 5,
-    marginLeft: 10,
-    textAlign: "center",
   },
   contentBox: {
     backgroundColor: "#e0f7fa",
@@ -298,6 +379,56 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   deleteButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  troDetails: {
+    backgroundColor: "#f0f0f0",
+    padding: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#0288d1",
+    marginTop: 20,
+  },
+  troTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#0288d1",
+  },
+  troInfo: {
+    fontSize: 16,
+    marginTop: 10,
+    color: "#333",
+  },
+  imageGallery: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 20,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    margin: 5,
+    borderRadius: 8,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  fullImage: {
+    width: 300,
+    height: 300,
+    borderRadius: 10,
+  },
+  closeButton: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#0288d1",
+    borderRadius: 5,
+  },
+  closeButtonText: {
     color: "#fff",
     fontWeight: "bold",
   },
