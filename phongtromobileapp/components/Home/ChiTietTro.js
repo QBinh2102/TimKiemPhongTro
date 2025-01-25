@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button, Alert, Image, ScrollView, Modal, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, StyleSheet, Button, Alert, Image, ScrollView, Modal, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import axios from 'axios';
+
+import { MyUserContext } from "../../configs/MyUserContext";
 
 const ChiTietTro = ({ route, navigation }) => {
   const { troId } = route.params;
+  const userLogin = useContext(MyUserContext);
   const [tro, setTro] = useState(null);
   const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -11,10 +14,14 @@ const ChiTietTro = ({ route, navigation }) => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
-  const [images, setImages] = useState([]); 
-  const [modalVisible, setModalVisible] = useState(false); 
-  const [selectedImage, setSelectedImage] = useState(null); 
+  const [images, setImages] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
+ 
+  const [advertiseModalVisible, setAdvertiseModalVisible] = useState(false);
+  const [advertiseTitle, setAdvertiseTitle] = useState('');
+  const [advertiseContent, setAdvertiseContent] = useState('');
 
   useEffect(() => {
     axios.get(`https://toquocbinh2102.pythonanywhere.com/tros/${troId}/`)
@@ -44,7 +51,7 @@ const ChiTietTro = ({ route, navigation }) => {
     fetchCities();
   }, []);
 
- 
+
   useEffect(() => {
     if (selectedCity) {
       const fetchDistricts = async () => {
@@ -60,7 +67,7 @@ const ChiTietTro = ({ route, navigation }) => {
     }
   }, [selectedCity]);
 
- 
+
   useEffect(() => {
     if (selectedDistrict) {
       const fetchWards = async () => {
@@ -76,7 +83,7 @@ const ChiTietTro = ({ route, navigation }) => {
     }
   }, [selectedDistrict]);
 
- 
+
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -92,7 +99,7 @@ const ChiTietTro = ({ route, navigation }) => {
     fetchImages();
   }, [troId]);
 
-  
+  // Handle delete tro
   const handleDelete = () => {
     Alert.alert(
       "Xóa trọ",
@@ -104,7 +111,7 @@ const ChiTietTro = ({ route, navigation }) => {
             axios.delete(`https://toquocbinh2102.pythonanywhere.com/tros/${troId}/`)
               .then(() => {
                 alert("Xóa trọ thành công!");
-                navigation.goBack();  // Quay lại trang quản lý trọ
+                navigation.goBack(); 
               })
               .catch(error => {
                 console.error("Lỗi khi xóa trọ", error);
@@ -116,21 +123,47 @@ const ChiTietTro = ({ route, navigation }) => {
     );
   };
 
-  
+ 
   const getCityName = (cityId) => cities.find(city => city.id === cityId)?.name || '';
   const getDistrictName = (districtId) => districts.find(district => district.id === districtId)?.name || '';
   const getWardName = (wardId) => wards.find(ward => ward.id === wardId)?.name || '';
 
-  
+
   const handleImagePress = (imageUrl) => {
     setSelectedImage(imageUrl);
-    setModalVisible(true); 
+    setModalVisible(true);
   };
-
 
   const closeModal = () => {
     setModalVisible(false);
     setSelectedImage(null);
+  };
+
+  
+  const handleAdvertiseSubmit = () => {
+    if (!advertiseTitle || !advertiseContent) {
+      alert("Vui lòng điền đầy đủ tiêu đề và nội dung.");
+      return;
+    }
+
+    const userId = userLogin.id;
+
+    axios.post("https://toquocbinh2102.pythonanywhere.com/baidangchothues/", {
+      tieuDe: advertiseTitle,
+      thongTin: advertiseContent,
+      nguoiDangBai: userId,
+      troChoThue: troId,
+    })
+      .then(() => {
+        alert("Quảng cáo trọ thành công!");
+        setAdvertiseModalVisible(false);
+        setAdvertiseTitle('');
+        setAdvertiseContent('');
+      })
+      .catch(error => {
+        console.error("Lỗi khi đăng quảng cáo", error);
+        alert("Đã có lỗi xảy ra khi đăng quảng cáo.");
+      });
   };
 
   if (!tro) {
@@ -138,51 +171,96 @@ const ChiTietTro = ({ route, navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Chi Tiết Trọ</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Chi Tiết Trọ</Text>
 
-      <Text style={styles.label}>Tên Trọ:</Text>
-      <Text style={styles.info}>{tro.tenTro}</Text>
+        <Text style={styles.label}>Tên Trọ:</Text>
+        <Text style={styles.info}>{tro.tenTro}</Text>
 
-      <Text style={styles.label}>Địa Chỉ:</Text>
-      <Text style={styles.info}>{tro.diaChi}</Text>
+        <Text style={styles.label}>Địa Chỉ:</Text>
+        <Text style={styles.info}>{tro.diaChi}</Text>
 
-      <Text style={styles.label}>Giá:</Text>
-      <Text style={styles.info}>{tro.gia} VND</Text>
+        <Text style={styles.label}>Giá:</Text>
+        <Text style={styles.info}>{tro.gia} VND</Text>
 
-      <Text style={styles.label}>Số Người Ở:</Text>
-      <Text style={styles.info}>{tro.soNguoiO}</Text>
+        <Text style={styles.label}>Số Người Ở:</Text>
+        <Text style={styles.info}>{tro.soNguoiO}</Text>
 
-      <Text style={styles.label}>Thành phố:</Text>
-      <Text style={styles.info}>{getCityName(selectedCity)}</Text>
+        <Text style={styles.label}>Thành phố:</Text>
+        <Text style={styles.info}>{getCityName(selectedCity)}</Text>
 
-      <Text style={styles.label}>Quận:</Text>
-      <Text style={styles.info}>{getDistrictName(selectedDistrict)}</Text>
+        <Text style={styles.label}>Quận:</Text>
+        <Text style={styles.info}>{getDistrictName(selectedDistrict)}</Text>
 
-      <Text style={styles.label}>Phường:</Text>
-      <Text style={styles.info}>{getWardName(selectedWard)}</Text>
+        <Text style={styles.label}>Phường:</Text>
+        <Text style={styles.info}>{getWardName(selectedWard)}</Text>
 
-   
-      <Text style={styles.imageTitle}>Ảnh của Trọ</Text>
-      <ScrollView horizontal style={styles.imageContainer}>
-        {images.length === 0 ? (
-          <Text>Không có ảnh</Text>
-        ) : (
-          images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => handleImagePress(image.anh)}>
-              <Image
-                source={{ uri: image.anh }}  // Đảm bảo URL ảnh là chính xác
-                style={styles.image}
-              />
-            </TouchableOpacity>
-          ))
-        )}
+        <Text style={styles.imageTitle}>Ảnh của Trọ</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageContainer}>
+          {images.length === 0 ? (
+            <Text>Không có ảnh</Text>
+          ) : (
+            images.map((image, index) => (
+              <TouchableOpacity key={index} onPress={() => handleImagePress(image.anh)}>
+                <Image
+                  source={{ uri: image.anh }}
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+            ))
+          )}
+        </ScrollView>
       </ScrollView>
 
- 
-      <Button title="Xóa trọ" color="red" onPress={handleDelete} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.buttonText}>Xóa trọ</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.advertiseButton} onPress={() => setAdvertiseModalVisible(true)}>
+          <Text style={styles.buttonText}>Đăng bài cho thuê</Text>
+        </TouchableOpacity>
+      </View>
 
-    
+      
+      <Modal
+        visible={advertiseModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setAdvertiseModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity onPress={() => setAdvertiseModalVisible(false)} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>X</Text>
+            </TouchableOpacity>
+            <Text style={styles.label}>Tiêu đề:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Nhập tiêu đề"
+              value={advertiseTitle}
+              onChangeText={setAdvertiseTitle}
+            />
+            <Text style={styles.label}>Nội dung:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Nhập nội dung"
+              value={advertiseContent}
+              onChangeText={setAdvertiseContent}
+              multiline
+            />
+            <TouchableOpacity style={styles.submitButton} onPress={handleAdvertiseSubmit}>
+              <Text style={styles.buttonText}>Đăng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+     
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -201,57 +279,95 @@ const ChiTietTro = ({ route, navigation }) => {
           </View>
         </View>
       </Modal>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#fff",
   },
+  scrollContainer: {
+    padding: 20,
+    flexGrow: 1,  
+  },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 20,
     color: "#0288d1",
+    textAlign: "center",
   },
   label: {
     fontSize: 16,
     fontWeight: "bold",
     marginVertical: 5,
+    color: "#444",
   },
   info: {
     fontSize: 16,
     marginBottom: 15,
+    color: "#555",
   },
   imageTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 20,
     marginBottom: 10,
+    color: "#0288d1",
   },
   imageContainer: {
     flexDirection: "row",
     marginBottom: 15,
+    paddingVertical: 10,
   },
   image: {
-    width: 100,
-    height: 100,
-    marginRight: 10,
+    width: 150,
+    height: 150,
+    marginRight: 15,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,  
+  },
+  deleteButton: {
+    backgroundColor: "#f44336",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 0.48,
+    alignItems: "center",
+  },
+  advertiseButton: {
+    backgroundColor: "#0288d1",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 0.48,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",  
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
   modalContent: {
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
+    width: "80%",
   },
   closeButton: {
     position: "absolute",
@@ -269,6 +385,23 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     resizeMode: "contain",
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 15,
+    paddingLeft: 10,
+  },
+  submitButton: {
+    backgroundColor: "#0288d1",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: "center",
   },
 });
 
