@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Button, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import { MyUserContext } from '../../configs/MyUserContext';
@@ -28,6 +28,7 @@ const TimTro = ({ navigation }) => {
 
   useEffect(() => {
     if (selectedCity) {
+      // console.log("Mã tỉnh thành: ", selectedCity); 
       const fetchDistricts = async () => {
         try {
           const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/city/${selectedCity}`);
@@ -38,11 +39,14 @@ const TimTro = ({ navigation }) => {
         }
       };
       fetchDistricts();
+    } else {
+      setDistricts([]); // Reset districts if no city is selected
     }
   }, [selectedCity]);
 
   useEffect(() => {
     if (selectedDistrict) {
+      // console.log("Mã quận huyện: ", selectedDistrict); 
       const fetchWards = async () => {
         try {
           const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/district/${selectedDistrict}`);
@@ -53,21 +57,40 @@ const TimTro = ({ navigation }) => {
         }
       };
       fetchWards();
+    } else {
+      setWards([]); // Reset wards if no district is selected
     }
   }, [selectedDistrict]);
+
+  useEffect(() => {
+    if (selectedWard) {
+      // console.log("Mã xã phường: ", selectedWard); 
+    }
+  }, [selectedWard]);
 
   const handleSearch = async () => {
     let url = "https://toquocbinh2102.pythonanywhere.com/tros/";
     const params = {};
-    
+  
     if (selectedCity) params.thanh_pho = selectedCity;
     if (selectedDistrict) params.quan = selectedDistrict;
     if (selectedWard) params.phuong = selectedWard;
-    
+  
     try {
       const response = await axios.get(url, { params });
-      if (response.data && response.data.length > 0) {
-        setTroList(response.data);
+      // console.log("API response: ", response.data);
+  
+     
+      const filteredTroList = response.data.filter(tro => {
+        return (
+          (selectedCity ? tro.thanh_pho === selectedCity : true) &&
+          (selectedDistrict ? tro.quan === selectedDistrict : true) &&
+          (selectedWard ? tro.phuong === selectedWard : true)
+        );
+      });
+  
+      if (filteredTroList.length > 0) {
+        setTroList(filteredTroList);
       } else {
         setTroList([]);
       }
@@ -76,6 +99,7 @@ const TimTro = ({ navigation }) => {
       setTroList([]);
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -117,11 +141,9 @@ const TimTro = ({ navigation }) => {
         ))}
       </Picker>
 
-    
       <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
         <Text style={styles.searchButtonText}>Tìm Trọ</Text>
       </TouchableOpacity>
-
 
       <ScrollView style={styles.resultContainer}>
         {troList.length > 0 ? (
@@ -209,7 +231,7 @@ const styles = StyleSheet.create({
   gia: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#d32f2f', 
+    color: '#d32f2f',
   },
   noResultsText: {
     textAlign: 'center',

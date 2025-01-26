@@ -4,6 +4,7 @@ import { Avatar } from "react-native-elements";
 import { Subheading } from "react-native-paper";
 import Modal from "react-native-modal";  // Import modal từ react-native-modal
 import { MyUserContext } from "../../configs/MyUserContext";
+import axios from 'axios';
 
 const ChiTietBaiDang = ({ route, navigation }) => {
   const userLogin = useContext(MyUserContext);
@@ -16,6 +17,57 @@ const ChiTietBaiDang = ({ route, navigation }) => {
   const [images, setImages] = useState([]);  // State để lưu danh sách ảnh
   const [isModalVisible, setIsModalVisible] = useState(false); // State để quản lý trạng thái modal
   const [selectedImage, setSelectedImage] = useState(null); // State lưu ảnh được chọn
+  const [findRoomInfo, setFindRoomInfo] = useState(null);  // State để lưu thông tin bài đăng tìm phòng
+
+  const [cities, setCities] = useState([]);       // State lưu danh sách thành phố
+  const [districts, setDistricts] = useState([]);   // State lưu danh sách quận
+  const [wards, setWards] = useState([]);           // State lưu danh sách phường
+
+  // Lấy danh sách thành phố
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await axios.get("https://toquocbinh2102.pythonanywhere.com/api/address/cities");
+        // console.log(response.data);  // Kiểm tra dữ liệu thành phố
+        setCities(response.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách thành phố:", error);
+      }
+    };
+    fetchCities();
+  }, []);
+
+  // Lấy danh sách quận khi có thành phố
+  useEffect(() => {
+    if (findRoomInfo && findRoomInfo.thanh_pho) {
+      const fetchDistricts = async () => {
+        try {
+          const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/city/${findRoomInfo.thanh_pho}`);
+          // console.log(response.data);  // Kiểm tra dữ liệu quận
+          setDistricts(response.data.districts);
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách quận:", error);
+        }
+      };
+      fetchDistricts();
+    }
+  }, [findRoomInfo?.thanh_pho]);
+
+  // Lấy danh sách phường khi có quận
+  useEffect(() => {
+    if (findRoomInfo && findRoomInfo.quan) {
+      const fetchWards = async () => {
+        try {
+          const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/district/${findRoomInfo.quan}`);
+          // console.log(response.data);  // Kiểm tra dữ liệu phường
+          setWards(response.data.wards);
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách phường:", error);
+        }
+      };
+      fetchWards();
+    }
+  }, [findRoomInfo?.quan]);
 
   useEffect(() => {
     // Lấy thông tin người đăng bài
@@ -33,12 +85,11 @@ const ChiTietBaiDang = ({ route, navigation }) => {
                   .then(response => response.json())
                   .then(troData => {
                     setTro(troData);
-                    
+
                     // Lấy ảnh liên quan đến trọ
                     fetch("https://toquocbinh2102.pythonanywhere.com/anhtros/")
                       .then(response => response.json())
                       .then(anhTroData => {
-                        // Lọc ảnh theo mã trọ
                         const imagesForTro = anhTroData.filter(image => image.tro === baiDangChoThueData.troChoThue);
                         setImages(imagesForTro);  // Lưu danh sách ảnh vào state
                       })
@@ -49,12 +100,13 @@ const ChiTietBaiDang = ({ route, navigation }) => {
             })
             .catch(error => console.error("Lỗi khi lấy thông tin bài đăng cho thuê:", error));
         } else if (userData.vaiTro === 3) {
-          fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/${baiDang.id}`)
+          // Lấy thông tin bài đăng tìm phòng nếu vaiTro = 3
+          fetch(`https://toquocbinh2102.pythonanywhere.com/baidangtimphongs/${baiDang.id}/`)
             .then(response => response.json())
-            .then(baiDangData => {
-              setTro(null);
+            .then(findRoomData => {
+              setFindRoomInfo(findRoomData);
             })
-            .catch(error => console.error("Lỗi khi lấy thông tin bài đăng:", error));
+            .catch(error => console.error("Lỗi khi lấy thông tin bài đăng tìm phòng:", error));
         }
       })
       .catch(error => console.error("Lỗi khi lấy thông tin người đăng bài:", error));
@@ -152,6 +204,21 @@ const ChiTietBaiDang = ({ route, navigation }) => {
     setSelectedImage(null);
   };
 
+  const getCityName = (cityId) => {
+    const city = cities.find(city => city.id === cityId);
+    return city ? city.name : "Chưa xác định thành phố";  // Trả về một tên mặc định nếu không có cityId
+  };
+
+  const getDistrictName = (districtId) => {
+    const district = districts.find(district => district.id === districtId);
+    return district ? district.name : "Chưa xác định quận";  // Trả về một tên mặc định nếu không có districtId
+  };
+
+  const getWardName = (wardId) => {
+    const ward = wards.find(ward => ward.id === wardId);
+    return ward ? ward.name : "Chưa xác định phường";  // Trả về một tên mặc định nếu không có wardId
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.postHeader}>
@@ -186,14 +253,34 @@ const ChiTietBaiDang = ({ route, navigation }) => {
         <Subheading style={styles.subtitle}>{baiDang.tieuDe}</Subheading>
         <Text style={styles.content}>{baiDang.thongTin}</Text>
       </View>
+      
+{tro && (
+  <View style={styles.troDetails}>
+    <View style={styles.troTitleContainer}>
+      <Text style={styles.troTitle}>Chi tiết trọ cho thuê</Text>
+      {/* Nút Xem chi tiết nằm bên phải */}
+      <TouchableOpacity 
+        style={styles.detailButton} 
+        onPress={() => navigation.navigate("ChiTietTro", { troId: tro.id })}  // Điều hướng đến màn hình ChiTietTro
+      >
+        <Text style={styles.detailButtonText}>Xem chi tiết</Text>
+      </TouchableOpacity>
+    </View>
+    <Text style={styles.troInfo}>Địa chỉ: {tro.diaChi}</Text>
+    <Text style={styles.troInfo}>Giá: {tro.gia} VND</Text>
+    <Text style={styles.troInfo}>Số người ở: {tro.soNguoiO}</Text>
+  </View>
+)}
 
-      {/* Hiển thị chi tiết trọ nếu có và vai trò người đăng bài là 2 */}
-      {tro && (
+
+
+      {/* Hiển thị thông tin bài đăng tìm phòng nếu vai trò là 3 */}
+      {findRoomInfo && (
         <View style={styles.troDetails}>
-          <Text style={styles.troTitle}>Chi tiết trọ cho thuê</Text>
-          <Text style={styles.troInfo}>Địa chỉ: {tro.diaChi}</Text>
-          <Text style={styles.troInfo}>Giá: {tro.gia} VND</Text>
-          <Text style={styles.troInfo}>Số người ở: {tro.soNguoiO}</Text>
+          <Text style={styles.troTitle}>Khu vực tìm phòng</Text>
+          {findRoomInfo.thanh_pho && <Text style={styles.troInfo}>Tỉnh/Thành phố: {getCityName(findRoomInfo.thanh_pho)}</Text>}
+          {findRoomInfo.quan && <Text style={styles.troInfo}>Quận: {getDistrictName(findRoomInfo.quan)}</Text>}
+          {findRoomInfo.phuong && <Text style={styles.troInfo}>Phường: {getWardName(findRoomInfo.phuong)}</Text>}
         </View>
       )}
 
@@ -267,7 +354,6 @@ const ChiTietBaiDang = ({ route, navigation }) => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -390,16 +476,34 @@ const styles = StyleSheet.create({
     borderColor: "#0288d1",
     marginTop: 20,
   },
+  troTitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',  // Để tiêu đề và nút cách nhau
+    alignItems: 'center',
+  },
   troTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#0288d1",
+  },
+  detailButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    backgroundColor: "#f44336",  // Màu đỏ nổi bật
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  detailButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   troInfo: {
     fontSize: 16,
     marginTop: 10,
     color: "#333",
   },
+
   imageGallery: {
     flexDirection: 'row',
     flexWrap: 'wrap',

@@ -124,6 +124,14 @@ const ChiTietTro = ({ route, navigation }) => {
   const getDistrictName = (districtId) => districts.find(district => district.id === districtId)?.name || '';
   const getWardName = (wardId) => wards.find(ward => ward.id === wardId)?.name || '';
 
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(value);
+  }; 
+
   const handleImagePress = (imageUrl) => {
     setSelectedImage(imageUrl);
     setModalVisible(true);
@@ -199,7 +207,7 @@ const ChiTietTro = ({ route, navigation }) => {
         <Text style={styles.info}>{tro.diaChi}</Text>
 
         <Text style={styles.label}>Giá:</Text>
-        <Text style={styles.info}>{tro.gia} VND</Text>
+        <Text style={styles.info}>{formatCurrency(tro.gia)}</Text>
 
         <Text style={styles.label}>Số Người Ở:</Text>
         <Text style={styles.info}>{tro.soNguoiO}</Text>
