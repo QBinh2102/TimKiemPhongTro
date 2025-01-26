@@ -10,8 +10,10 @@ const QuanLyTro = ({ navigation }) => {
 
   useEffect(() => {
     if (user && user.vaiTro === 2) {
+      console.log("user.id: ", user.id);  // Kiểm tra user.id
       axios.get(`https://toquocbinh2102.pythonanywhere.com/tros/?nguoiChoThue=${user.id}`)
         .then(response => {
+          console.log("Danh sách trọ: ", response.data);  // Kiểm tra dữ liệu trả về từ API
           setTroList(response.data);
         })
         .catch(error => {
@@ -23,7 +25,6 @@ const QuanLyTro = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Quản lý Trọ</Text>
-      
       
       {troList.length > 0 ? (
         troList.map((tro) => (
@@ -39,7 +40,6 @@ const QuanLyTro = ({ navigation }) => {
         <Text>Chưa có trọ nào.</Text>
       )}
 
-  
       <Button mode="contained" onPress={() => navigation.navigate("ThemTro")}>
         Thêm Trọ
       </Button>

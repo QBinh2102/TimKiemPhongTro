@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, Button, Alert, Image, ScrollView, Modal, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import axios from 'axios';
-
 import { MyUserContext } from "../../configs/MyUserContext";
 
 const ChiTietTro = ({ route, navigation }) => {
@@ -17,12 +16,11 @@ const ChiTietTro = ({ route, navigation }) => {
   const [images, setImages] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-
- 
   const [advertiseModalVisible, setAdvertiseModalVisible] = useState(false);
   const [advertiseTitle, setAdvertiseTitle] = useState('');
   const [advertiseContent, setAdvertiseContent] = useState('');
 
+ 
   useEffect(() => {
     axios.get(`https://toquocbinh2102.pythonanywhere.com/tros/${troId}/`)
       .then(response => {
@@ -30,6 +28,9 @@ const ChiTietTro = ({ route, navigation }) => {
         setSelectedCity(response.data.thanh_pho);
         setSelectedDistrict(response.data.quan);
         setSelectedWard(response.data.phuong);
+        // console.log("userLogin.id: ", userLogin.id);
+        // console.log("tro.nguoiChoThue: ", tro.nguoiChoThue);
+
       })
       .catch(error => {
         console.error("Lỗi khi lấy thông tin trọ", error);
@@ -37,17 +38,16 @@ const ChiTietTro = ({ route, navigation }) => {
       });
   }, [troId]);
 
- 
+  
   useEffect(() => {
     const fetchCities = async () => {
       try {
         const response = await axios.get("https://toquocbinh2102.pythonanywhere.com/api/address/cities");
         setCities(response.data);
       } catch (error) {
-        console.error("Error fetching cities:", error);
+        console.error("Lỗi khi lấy danh sách thành phố:", error);
       }
     };
-
     fetchCities();
   }, []);
 
@@ -59,15 +59,14 @@ const ChiTietTro = ({ route, navigation }) => {
           const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/city/${selectedCity}`);
           setDistricts(response.data.districts);
         } catch (error) {
-          console.error("Error fetching districts:", error);
+          console.error("Lỗi khi lấy danh sách quận:", error);
         }
       };
-
       fetchDistricts();
     }
   }, [selectedCity]);
 
-
+ 
   useEffect(() => {
     if (selectedDistrict) {
       const fetchWards = async () => {
@@ -75,15 +74,14 @@ const ChiTietTro = ({ route, navigation }) => {
           const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/district/${selectedDistrict}`);
           setWards(response.data.wards);
         } catch (error) {
-          console.error("Error fetching wards:", error);
+          console.error("Lỗi khi lấy danh sách phường:", error);
         }
       };
-
       fetchWards();
     }
   }, [selectedDistrict]);
 
-
+ 
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -91,15 +89,14 @@ const ChiTietTro = ({ route, navigation }) => {
         const filteredImages = response.data.filter(image => image.tro === troId); 
         setImages(filteredImages);
       } catch (error) {
-        console.error("Lỗi khi lấy ảnh", error);
+        console.error("Lỗi khi lấy ảnh trọ", error);
         alert("Đã có lỗi xảy ra khi lấy ảnh.");
       }
     };
-
     fetchImages();
   }, [troId]);
 
-  // Handle delete tro
+  // Xóa trọ
   const handleDelete = () => {
     Alert.alert(
       "Xóa trọ",
@@ -123,11 +120,9 @@ const ChiTietTro = ({ route, navigation }) => {
     );
   };
 
- 
   const getCityName = (cityId) => cities.find(city => city.id === cityId)?.name || '';
   const getDistrictName = (districtId) => districts.find(district => district.id === districtId)?.name || '';
   const getWardName = (wardId) => wards.find(ward => ward.id === wardId)?.name || '';
-
 
   const handleImagePress = (imageUrl) => {
     setSelectedImage(imageUrl);
@@ -139,7 +134,6 @@ const ChiTietTro = ({ route, navigation }) => {
     setSelectedImage(null);
   };
 
-  
   const handleAdvertiseSubmit = () => {
     if (!advertiseTitle || !advertiseContent) {
       alert("Vui lòng điền đầy đủ tiêu đề và nội dung.");
@@ -166,6 +160,25 @@ const ChiTietTro = ({ route, navigation }) => {
       });
   };
 
+  const handleSave = () => {
+    axios.put(`https://toquocbinh2102.pythonanywhere.com/tros/${troId}/`, {
+      ...tro,
+      active: true,  
+    })
+    .then(() => {
+      alert("Duyệt trọ thành công!");
+      setTro(prevState => ({
+        ...prevState,
+        active: true, 
+      }));
+    })
+    .catch((error) => {
+      console.error("Lỗi khi duyệt trọ", error);
+      alert("Đã có lỗi xảy ra khi duyệt trọ.");
+    });
+  };
+  
+
   if (!tro) {
     return <Text>Đang tải thông tin trọ...</Text>;
   }
@@ -175,6 +188,7 @@ const ChiTietTro = ({ route, navigation }) => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Chi Tiết Trọ</Text>
 
@@ -199,6 +213,13 @@ const ChiTietTro = ({ route, navigation }) => {
         <Text style={styles.label}>Phường:</Text>
         <Text style={styles.info}>{getWardName(selectedWard)}</Text>
 
+       
+        <View style={[styles.statusTag, { backgroundColor: tro?.active ? 'green' : 'red' }]}>
+          <Text style={styles.statusText}>
+            {tro?.active ? "ĐÃ DUYỆT" : "CHƯA ĐƯỢC DUYỆT"}
+          </Text>
+        </View>
+
         <Text style={styles.imageTitle}>Ảnh của Trọ</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.imageContainer}>
           {images.length === 0 ? (
@@ -217,22 +238,27 @@ const ChiTietTro = ({ route, navigation }) => {
       </ScrollView>
 
       <View style={styles.buttonContainer}>
+          {userLogin.id === tro.nguoiChoThue && (
+            <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+              <Text style={styles.buttonText}>Xóa trọ</Text>
+            </TouchableOpacity>
+          )}
 
-  {userLogin.id === tro.nguoiChoThue && (
-    <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-      <Text style={styles.buttonText}>Xóa trọ</Text>
-    </TouchableOpacity>
-  )}
-  
-  
-  {userLogin.id === tro.nguoiChoThue && (
-    <TouchableOpacity style={styles.advertiseButton} onPress={() => setAdvertiseModalVisible(true)}>
-      <Text style={styles.buttonText}>Đăng bài cho thuê</Text>
-    </TouchableOpacity>
-  )}
-</View>
+         
+          {userLogin.vaiTro === 1 && !tro.active && (
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.buttonText}>Duyệt trọ</Text>
+            </TouchableOpacity>
+          )}
 
-      
+          {userLogin.id === tro.nguoiChoThue && tro.active && (
+            <TouchableOpacity style={styles.advertiseButton} onPress={() => setAdvertiseModalVisible(true)}>
+              <Text style={styles.buttonText}>Đăng bài cho thuê</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+  
       <Modal
         visible={advertiseModalVisible}
         transparent={true}
@@ -266,7 +292,7 @@ const ChiTietTro = ({ route, navigation }) => {
         </View>
       </Modal>
 
-     
+   
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -296,12 +322,13 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 20,
-    flexGrow: 1,  
+    flexGrow: 1,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 20,
+    paddingTop:25,
+    marginBottom: 25, 
     color: "#0288d1",
     textAlign: "center",
   },
@@ -336,13 +363,35 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ddd",
   },
+  statusTag: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    backgroundColor: "red",
+  },
+  statusText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,  
+    marginBottom: 20,
   },
   deleteButton: {
     backgroundColor: "#f44336",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 0.48,
+    alignItems: "center",
+  },
+  saveButton: {
+    backgroundColor: "#0288d1",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,

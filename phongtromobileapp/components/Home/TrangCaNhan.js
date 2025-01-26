@@ -32,7 +32,7 @@ const TrangCaNhan = ({ route, navigation }) => {
   useEffect(() => {
     const userLoginTmp = { ...userLogin, id: userLogin.id };
 
-    // Lấy dữ liệu người dùng từ API
+
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`${API_URL}/users/${userId}`);
@@ -42,7 +42,7 @@ const TrangCaNhan = ({ route, navigation }) => {
       }
     };
 
-    // Lấy bài viết của người dùng
+    
     const fetchUserPosts = async () => {
       try {
         const response = await axios.get(`${API_URL}/baidangs/`);
@@ -53,14 +53,14 @@ const TrangCaNhan = ({ route, navigation }) => {
       }
     };
 
-    // Lấy danh sách tương tác của người dùng
+   
     const fetchTuongTacData = async () => {
       try {
         if (userLoginTmp?.id) {
           const response = await axios.get(`${API_URL}/users/${userLoginTmp.id}`);
           setUserTuongTac(response.data.tuongTac || []);
           
-          // Kiểm tra nếu người dùng đã theo dõi
+          
           if (response.data.tuongTac && response.data.tuongTac.includes(userId)) {
             setIsFollowing(true);
           } else {
@@ -72,7 +72,7 @@ const TrangCaNhan = ({ route, navigation }) => {
       }
     };
 
-    // Gọi các hàm trên khi có sự thay đổi userId hoặc userLogin
+   
     fetchUserData();
     fetchUserPosts();
     fetchTuongTacData();

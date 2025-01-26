@@ -15,6 +15,7 @@ import TimNguoiKhac from "./components/Home/TimNguoiKhac";
 import ChiTietBaiDang from "./components/Home/ChiTietBaiDang";
 import TrangCaNhan from "./components/Home/TrangCaNhan";
 import TimTro from "./components/Home/TimTro";
+import KiemDuyetTro from "./components/Home/KiemDuyetTro";
 
 import QuanLyTro from "./components/Home/QuanLyTro"; 
 import ThemTro from "./components/Home/ThemTro"; 
@@ -100,6 +101,11 @@ const HomeStackNavigator = () => {
         component={TimTro}
         options={{ title: "Tìm trọ" }}
       />
+      <Stack.Screen
+        name="KiemDuyetTro"
+        component={KiemDuyetTro}
+        options={{ title: "Kiểm duyệt trọ" }}
+      />
 
     </Stack.Navigator>
   );
@@ -142,6 +148,11 @@ const ProfileStackNavigator = () => {
         name="TimTro"
         component={TimTro}
         options={{ title: "Tìm trọ" }}
+      />
+       <Stack.Screen
+        name="KiemDuyetTro"
+        component={KiemDuyetTro}
+        options={{ title: "Kiểm duyệt trọ" }}
       />
 
     </Stack.Navigator>

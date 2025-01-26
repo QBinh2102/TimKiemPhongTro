@@ -129,7 +129,14 @@ const Profile = ({ route, navigation }) => {
             <Text style={styles.contactText}>Ngày tham gia: {formatDate(user.date_joined)}</Text>
           </View>
 
-         
+          {user.vaiTro === 1 && (
+            <View style={styles.manageTroContainer}>
+              <Button mode="contained" onPress={() => navigation.navigate('KiemDuyetTro')}>
+                Kiểm duyệt trọ
+              </Button>
+            </View>
+          )}
+          
           {user.vaiTro === 2 && (
             <View style={styles.manageTroContainer}>
               <Button mode="contained" onPress={() => navigation.navigate('QuanLyTro')}>
