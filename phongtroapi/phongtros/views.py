@@ -6,17 +6,17 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.parsers import  MultiPartParser, FormParser
 from django.db.models import Count
 from django.db.models.functions import TruncYear, TruncQuarter, TruncMonth, ExtractYear
-from .models import User, Tro, AnhTro, BaiDang, BaiDangChoThue, BinhLuan, Chat, ChatText, ChatAnh
+from .models import User, Tro, AnhTro, BaiDang, BaiDangChoThue, BinhLuan, Chat, ChatText, ChatAnh, BaiDangTimPhong
+from rest_framework.decorators import api_view
 from .serializers import (
     UserSerializer, TroSerializer, TroDetailsSerializer, AnhTroSerializer,
-    BaiDangSerializer, BaiDangChoThueSerializer, BinhLuanSerializer,
-    ChatSerializer, ChatTextSerializer, ChatAnhSerializer
+    BaiDangSerializer, BaiDangChoThueSerializer, BinhLuanSerializer,BaiDangTimPhongSerializer
 )
 
-class UserViewSet(viewsets.ViewSet,
+class UserViewSet(viewsets.ModelViewSet,
                    generics.ListAPIView,
                    generics.CreateAPIView,  #post
-                   generics.RetrieveAPIView,):#get
+                   generics.RetrieveAPIView):#get
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
     parser_classes = [MultiPartParser, FormParser]
@@ -31,8 +31,6 @@ class UserViewSet(viewsets.ViewSet,
     @action(methods=['get'], url_path='current-user', detail=False)
     def get_current_user(self, request):
         return Response(UserSerializer(request.user).data)
-
-    
 
     # def get_permissions(self):
     #     if self.action == 'retrieve':
@@ -49,9 +47,11 @@ class UserViewSet(viewsets.ViewSet,
 
 
 class TroViewSet(viewsets.ModelViewSet):
-    queryset = Tro.objects.filter(active=True)
-    serializer_class = TroDetailsSerializer
-
+    # queryset = Tro.objects.filter(active=True)
+    queryset = Tro.objects.all() # Sang 26.1
+    # serializer_class = TroDetailsSerializer
+    serializer_class = TroSerializer
+    search_fields = ['thanh_pho', 'quan', 'phuong']
     @action(methods=['post'], detail=True, url_path="hide_tro", url_name="hide-tro")
         #/tro/{pk}/hide_tro
     def hide_Tro(self, request, pk):
@@ -63,41 +63,46 @@ class TroViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(data=TroSerializer(t).data, status = status.HTTP_200_OK)
 
+
+
 # ViewSet cho AnhTro
 class AnhTroViewSet(viewsets.ModelViewSet):
     queryset = AnhTro.objects.all()
     serializer_class = AnhTroSerializer
 
-
 # ViewSet cho BaiDang
 class BaiDangViewSet(viewsets.ModelViewSet):
-    queryset = BaiDang.objects.all()
+    queryset = BaiDang.objects.filter(active=True)
     serializer_class = BaiDangSerializer
 
 # ViewSet cho BaiDangChoThue
 class BaiDangChoThueViewSet(BaiDangViewSet):
-    queryset = BaiDangChoThue.objects.all()
+    queryset = BaiDangChoThue.objects.filter(active=True)
     serializer_class = BaiDangChoThueSerializer
+    
+class BaiDangTimPhongViewSet(BaiDangViewSet):
+    queryset = BaiDangTimPhong.objects.filter(active=True)
+    serializer_class = BaiDangTimPhongSerializer
 
 # ViewSet cho BinhLuan
 class BinhLuanViewSet(viewsets.ModelViewSet):
-    queryset = BinhLuan.objects.all()
+    queryset = BinhLuan.objects.filter(active=True)
     serializer_class = BinhLuanSerializer
 
-# ViewSet cho Chat
-class ChatViewSet(viewsets.ModelViewSet):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-
-# ViewSet cho ChatText
-class ChatTextViewSet(ChatViewSet):
-    queryset = ChatText.objects.all()
-    serializer_class = ChatTextSerializer
-
-# ViewSet cho ChatAnh
-class ChatAnhViewSet(ChatViewSet):
-    queryset = ChatAnh.objects.all()
-    serializer_class = ChatAnhSerializer
+# # ViewSet cho Chat
+# class ChatViewSet(viewsets.ModelViewSet):
+#     queryset = Chat.objects.all()
+#     serializer_class = ChatSerializer
+# 
+# # ViewSet cho ChatText
+# class ChatTextViewSet(ChatViewSet):
+#     queryset = ChatText.objects.all()
+#     serializer_class = ChatTextSerializer
+# 
+# # ViewSet cho ChatAnh
+# class ChatAnhViewSet(ChatViewSet):
+#     queryset = ChatAnh.objects.all()
+#     serializer_class = ChatAnhSerializer
 
 def get_available_years(request):
     # Truy xuất danh sách năm từ dữ liệu ngày tạo tài khoản
@@ -146,3 +151,5 @@ def user_stats_api(request):
         # Biến đổi thành danh sách giá trị tương ứng
         values = list(values_dict.values())
     return JsonResponse({'labels': labels, 'values': values})
+
+

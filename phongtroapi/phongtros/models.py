@@ -83,6 +83,11 @@ class BaiDangChoThue(BaiDang):
     class Meta:
         verbose_name_plural = 'Bài đăng cho thuê'
 
+class BaiDangTimPhong(BaiDang):
+    thanh_pho = models.ForeignKey(City, null=True, blank=True, on_delete=models.SET_NULL)
+    quan = models.ForeignKey(District, null=True, blank=True, on_delete=models.SET_NULL)
+    phuong = models.ForeignKey(Ward, null=True, blank=True, on_delete=models.SET_NULL)
+
 class BinhLuan(BaseModel):
     thongTin = models.TextField()
     updated_date = models.DateTimeField(auto_now=True)

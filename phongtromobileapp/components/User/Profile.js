@@ -5,20 +5,24 @@ import MyStyles from "../../styles/MyStyles";
 import { Button, IconButton, Menu, Provider } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
-
+import { Picker } from '@react-native-picker/picker';
 
 const Profile = ({ route, navigation }) => {
   const user = useContext(MyUserContext);
   const [userPosts, setUserPosts] = useState([]);
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
+  const [cities, setCities] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedWard, setSelectedWard] = useState(null);
   const dispatch = useContext(MyDispatchContext);
 
   const logout = async () => {
     await AsyncStorage.removeItem("token");
-    dispatch({
-      type: "logout"
-    });
+    dispatch({ type: "logout" });
   };
 
   const getVaiTroName = (vaiTro) => {
@@ -38,162 +42,246 @@ const Profile = ({ route, navigation }) => {
     return `${day}/${month}/${year}`;
   };
 
+ 
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await axios.get("https://toquocbinh2102.pythonanywhere.com/api/address/cities");
+        setCities(response.data);
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+      }
+    };
+    fetchCities();
+  }, []);
+
+ 
+  useEffect(() => {
+    if (selectedCity) {
+      const fetchDistricts = async () => {
+        try {
+          const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/city/${selectedCity}`);
+          setDistricts(response.data.districts || []);
+        } catch (error) {
+          setDistricts([]);
+        }
+      };
+      fetchDistricts();
+    }
+  }, [selectedCity]);
+
+ 
+  useEffect(() => {
+    if (selectedDistrict) {
+      const fetchWards = async () => {
+        try {
+          const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/district/${selectedDistrict}`);
+          setWards(response.data.wards || []);
+        } catch (error) {
+          setWards([]);
+        }
+      };
+      fetchWards();
+    }
+  }, [selectedDistrict]);
+
   useEffect(() => {
     if (user) {
-      fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/`)
+      fetch("https://toquocbinh2102.pythonanywhere.com/baidangs/")
         .then((response) => response.json())
         .then((data) => {
           const filteredPosts = data.filter(post => post.nguoiDangBai === user.id);
-  
-        
           const sortedPosts = filteredPosts.sort((b, a) => new Date(b.created_date) - new Date(a.created_date));
-  
           setUserPosts(sortedPosts);
         })
         .catch((error) => console.error("Error fetching user posts:", error));
     }
-  }, [user]); 
-  
-  const handleAddPost = () => {
-    if (newPostTitle.trim() === "" || newPostContent.trim() === "") {
-      alert('Vui lòng điền đủ tiêu đề và nội dung bài đăng!');
-      return;
-    }
+  }, [user]);
+
+  const handleAddPost = async () => {
+   
   
   
-    fetch("https://toquocbinh2102.pythonanywhere.com/baidangs/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        tieuDe: newPostTitle,
-        thongTin: newPostContent,
-        nguoiDangBai: user.id,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Lỗi từ server: ' + response.status);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setUserPosts((prevPosts) => [data, ...prevPosts]);
+    try {
+      
+      const formData = new FormData();
+  
+      
+      formData.append('tieuDe', newPostTitle);
+      formData.append('thongTin', newPostContent);
+      formData.append('nguoiDangBai', user.id); 
+      formData.append('thanh_pho', selectedCity);  
+      formData.append('quan', selectedDistrict); 
+      formData.append('phuong', selectedWard); 
+
+  
+     
+      // console.log("Form data bài đăng đã được tạo:", formData);
+  
+   
+      const response = await axios.post("https://toquocbinh2102.pythonanywhere.com/baidangtimphongs/", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', 
+        },
+      });
+  
+      
+      if (response.data) {
+        alert("Bài đăng đã được tạo thành công!");
+        setUserPosts((prevPosts) => [response.data, ...prevPosts]);
+    
         setNewPostTitle("");
         setNewPostContent("");
-      })
-      .catch((error) => {
-        console.error("Lỗi khi đăng bài:", error);
-        alert("Đã có lỗi xảy ra khi đăng bài. Mã lỗi: " + error.message);
-      });
+        setSelectedCity(null);
+        setSelectedDistrict(null);
+        setSelectedWard(null);
+      
+      }
+    } catch (error) {
+      console.error("Lỗi khi đăng bài:", error);
+      alert("Đã có lỗi xảy ra khi đăng bài. Vui lòng thử lại.");
+    }
   };
+  
+  
 
-  const [visible, setVisible] = useState(false); // Điều khiển hiển thị menu
-  const showMenu = () => setVisible(true); // Hiển thị menu
-  const hideMenu = () => setVisible(false); // Ẩn menu
+  const [visible, setVisible] = useState(false); 
+  const showMenu = () => setVisible(true); 
+  const hideMenu = () => setVisible(false); 
 
   return (
     <Provider>
-    <ScrollView style={styles.container}>
-      {user ? (
-        <>
-          <View style={styles.profileHeader}>
-            <Image
-              source={user.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${user.image}` } : null}
-              style={styles.profileImage}
-            />
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>
-                {user.last_name} {user.first_name}
-              </Text>
-              <Text style={styles.profileUsername}>@{user.username}</Text>
-            </View>
-            <Menu
-              visible={visible}
-              onDismiss={hideMenu} // Khi ấn ngoài menu sẽ tắt
-              anchor={<IconButton icon="dots-vertical" size={24} onPress={showMenu} />} // Gắn menu vào icon ba chấm
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }} // Menu xuất hiện dưới nút ba chấm
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }} // Đảm bảo menu mở ra từ dưới nút ba chấm
-            >
-              {/* <Menu.Item onPress={goToInfo} title="Thông tin" /> */}
-              <Menu.Item onPress={logout} title="Đăng xuất" />
-            </Menu>
-          </View>
-
-          <View style={styles.contactInfo}>
-            <Text style={styles.contactTitle}>Thông tin liên hệ</Text>
-            <Text style={styles.contactText}>Số điện thoại: {user.SDT}</Text>
-            <Text style={styles.contactText}>Email: {user.email}</Text>
-            <Text style={styles.contactText}>Vai trò: {getVaiTroName(user.vaiTro)}</Text>
-            <Text style={styles.contactText}>Ngày tham gia: {formatDate(user.date_joined)}</Text>
-          </View>
-
-          {user.vaiTro === 1 && (
-            <View style={styles.manageTroContainer}>
-              <Button mode="contained" onPress={() => navigation.navigate('KiemDuyetTro')}>
-                Kiểm duyệt trọ
-              </Button>
-            </View>
-          )}
-          
-          {user.vaiTro === 2 && (
-            <View style={styles.manageTroContainer}>
-              <Button mode="contained" onPress={() => navigation.navigate('QuanLyTro')}>
-                Quản lý trọ
-              </Button>
-            </View>
-          )}
-
-       
-          {user.vaiTro === 3 && (
-            <View style={styles.addPostForm}>
-              <TextInput
-                style={styles.input}
-                placeholder="Tiêu đề bài đăng"
-                value={newPostTitle}
-                onChangeText={setNewPostTitle}
+      <ScrollView style={styles.container}>
+        {user ? (
+          <>
+            <View style={styles.profileHeader}>
+              <Image
+                source={user.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${user.image}` } : null}
+                style={styles.profileImage}
               />
-              <TextInput
-                style={styles.textArea}
-                placeholder="Nội dung bài đăng"
-                value={newPostContent}
-                onChangeText={setNewPostContent}
-                multiline
-              />
-              <Button mode="contained" onPress={handleAddPost}>Đăng bài</Button>
-            </View>
-          )}
-
-          <Text style={styles.postsTitle}>Bài viết của {user.first_name}:</Text>
-          {userPosts.length > 0 ? (
-            userPosts.slice().reverse().map((post) => (
-              <TouchableOpacity
-                key={post.id}
-                style={styles.postItem}
-                onPress={() => navigation.navigate('ChiTietBaiDang', { baiDang: post })}
-              >
-                <Text style={styles.postTitle}>{post.tieuDe}</Text>
-                <Text style={styles.postDate}>
-                  Ngày đăng: {new Date(post.created_date).toLocaleString("vi-VN")}
+              <View style={styles.profileInfo}>
+                <Text style={styles.profileName}>
+                  {user.last_name} {user.first_name}
                 </Text>
-                <View style={styles.postContent}>
-                  <Text style={styles.postInfo}>{post.thongTin.replace(/<[^>]+>/g, '')}</Text>
-                </View>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text style={styles.noPostsText}>Người dùng này chưa đăng bài viết nào.</Text>
-          )}
+                <Text style={styles.profileUsername}>@{user.username}</Text>
+              </View>
+              <Menu
+                visible={visible}
+                onDismiss={hideMenu}
+                anchor={<IconButton icon="dots-vertical" size={24} onPress={showMenu} />}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              >
+                <Menu.Item onPress={logout} title="Đăng xuất" />
+              </Menu>
+            </View>
 
-          <View style={MyStyles.container}>
-            <Button mode="contained-tonal" onPress={logout}>Đăng xuất</Button>
-          </View>
-        </>
-      ) : (
-        <Text>Đang tải thông tin người dùng...</Text>
-      )}
-    </ScrollView>
+            <View style={styles.contactInfo}>
+              <Text style={styles.contactTitle}>Thông tin liên hệ</Text>
+              <Text style={styles.contactText}>Số điện thoại: {user.SDT}</Text>
+              <Text style={styles.contactText}>Email: {user.email}</Text>
+              <Text style={styles.contactText}>Vai trò: {getVaiTroName(user.vaiTro)}</Text>
+              <Text style={styles.contactText}>Ngày tham gia: {formatDate(user.date_joined)}</Text>
+            </View>
+
+            {user.vaiTro === 1 && (
+              <View style={styles.manageTroContainer}>
+                <Button mode="contained" onPress={() => navigation.navigate('KiemDuyetTro')}>
+                  Kiểm duyệt trọ
+                </Button>
+              </View>
+            )}
+
+            {user.vaiTro === 2 && (
+              <View style={styles.manageTroContainer}>
+                <Button mode="contained" onPress={() => navigation.navigate('QuanLyTro')}>
+                  Quản lý trọ
+                </Button>
+              </View>
+            )}
+            {user.vaiTro === 3 && (
+              <View style={styles.addPostForm}>
+                {/* Dropdown for City */}
+                <View style={styles.input}>
+                  <Text>Chọn Tỉnh/Thành phố:</Text>
+                  <Picker
+                    selectedValue={selectedCity}
+                    onValueChange={(itemValue) => setSelectedCity(itemValue)}
+                  >
+                    {cities.map((city) => (
+                      <Picker.Item key={city.id} label={city.name} value={city.id} />
+                    ))}
+                  </Picker>
+                </View>
+
+                {/* Dropdown for District */}
+                <View style={styles.input}>
+                  <Text>Chọn Quận/Huyện:</Text>
+                  <Picker
+                    selectedValue={selectedDistrict}
+                    onValueChange={(itemValue) => setSelectedDistrict(itemValue)}
+                    enabled={selectedCity !== null}
+                  >
+                    {districts.map((district) => (
+                      <Picker.Item key={district.id} label={district.name} value={district.id} />
+                    ))}
+                  </Picker>
+                </View>
+
+                {/* Dropdown for Ward */}
+                <View style={styles.input}>
+                  <Text>Chọn Xã/Phường/Thị trấn:</Text>
+                  <Picker
+                    selectedValue={selectedWard}
+                    onValueChange={(itemValue) => setSelectedWard(itemValue)}
+                    enabled={selectedDistrict !== null}
+                  >
+                    {wards.map((ward) => (
+                      <Picker.Item key={ward.id} label={ward.name} value={ward.id} />
+                    ))}
+                  </Picker>
+                </View>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Tiêu đề bài đăng"
+                  value={newPostTitle}
+                  onChangeText={setNewPostTitle}
+                />
+                <TextInput
+                  style={styles.textArea}
+                  placeholder="Nội dung bài đăng"
+                  value={newPostContent}
+                  onChangeText={setNewPostContent}
+                  multiline
+                />
+                <Button mode="contained" onPress={handleAddPost}>Đăng bài tìm phòng</Button>
+              </View>
+            )}
+
+            <Text style={styles.postsTitle}>Bài viết của {user.first_name}:</Text>
+            {userPosts.length > 0 ? (
+              userPosts.slice().reverse().map((post) => (
+                <TouchableOpacity
+                  key={post.id}
+                  style={styles.postItem}
+                  onPress={() => navigation.navigate('ChiTietBaiDang', { baiDang: post })}
+                >
+                  <Text style={styles.postTitle}>{post.tieuDe}</Text>
+                  <Text style={styles.postDate}>
+                    Ngày đăng: {new Date(post.created_date).toLocaleString("vi-VN")}
+                  </Text>
+                  <Text style={styles.postInfo}>{post.thongTin.replace(/<[^>]+>/g, '')}</Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={styles.noPostsText}>Người dùng này chưa đăng bài viết nào.</Text>
+            )}
+          </>
+        ) : (
+          <Text>Đang tải thông tin người dùng...</Text>
+        )}
+      </ScrollView>
     </Provider>
   );
 };
@@ -206,7 +294,6 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     flexDirection: "row",
-    alignItems: "center",
     marginBottom: 20,
     backgroundColor: "#f0f0f0",
     padding: 15,
@@ -309,9 +396,6 @@ const styles = StyleSheet.create({
   postDate: {
     fontSize: 14,
     color: "#888",
-  },
-  postContent: {
-    marginTop: 10,
   },
   postInfo: {
     fontSize: 14,
