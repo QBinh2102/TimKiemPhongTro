@@ -25,6 +25,7 @@ import ChiTietTro from "./components/Home/ChiTietTro";
 import { MyDispatchContext, MyUserContext } from './configs/MyUserContext';
 import MyUserReducers from './configs/MyUserReducers';
 import Profile from './components/User/Profile';
+import ThayDoiThongTin from './components/User/ThayDoiThongTin';
 
 // Firebase
 import { initializeApp } from 'firebase/app';
@@ -153,6 +154,11 @@ const ProfileStackNavigator = () => {
         name="KiemDuyetTro"
         component={KiemDuyetTro}
         options={{ title: "Kiểm duyệt trọ" }}
+      />
+        <Stack.Screen
+        name="ThayDoiThongTin"
+        component={ThayDoiThongTin}
+        options={{ title: "ThayDoiThongTin" }}
       />
 
     </Stack.Navigator>

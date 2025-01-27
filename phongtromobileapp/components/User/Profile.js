@@ -167,7 +167,9 @@ const Profile = ({ route, navigation }) => {
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               >
+                <Menu.Item onPress={() => navigation.navigate('ThayDoiThongTin')} title="Thay đổi thông tin" />
                 <Menu.Item onPress={logout} title="Đăng xuất" />
+              
               </Menu>
             </View>
 
