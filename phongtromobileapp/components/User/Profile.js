@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, Modal } from "react-native";
 import { MyDispatchContext, MyUserContext } from "../../configs/MyUserContext";
 import MyStyles from "../../styles/MyStyles";
 import { Button, IconButton, Menu, Provider } from "react-native-paper";
@@ -18,7 +18,10 @@ const Profile = ({ route, navigation }) => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
+  const [followingUsers, setFollowingUsers] = useState([]);
   const dispatch = useContext(MyDispatchContext);
+  const [isModalVisible, setIsModalVisible] = useState(false); 
+  const [visible, setVisible] = useState(false); // Quản lý trạng thái menu (nút 3 chấm)
 
   const logout = async () => {
     await AsyncStorage.removeItem("token");
@@ -42,7 +45,9 @@ const Profile = ({ route, navigation }) => {
     return `${day}/${month}/${year}`;
   };
 
- 
+  const showMenu = () => setVisible(true);  
+  const hideMenu = () => setVisible(false); 
+
   useEffect(() => {
     const fetchCities = async () => {
       try {
@@ -55,7 +60,6 @@ const Profile = ({ route, navigation }) => {
     fetchCities();
   }, []);
 
- 
   useEffect(() => {
     if (selectedCity) {
       const fetchDistricts = async () => {
@@ -70,7 +74,6 @@ const Profile = ({ route, navigation }) => {
     }
   }, [selectedCity]);
 
- 
   useEffect(() => {
     if (selectedDistrict) {
       const fetchWards = async () => {
@@ -95,18 +98,21 @@ const Profile = ({ route, navigation }) => {
           setUserPosts(sortedPosts);
         })
         .catch((error) => console.error("Error fetching user posts:", error));
+
+      if (user.tuongTac) {
+        Promise.all(user.tuongTac.map(async (id) => {
+          const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/users/${id}`);
+          return response.data;
+        }))
+        .then(data => setFollowingUsers(data))
+        .catch((error) => console.error("Error fetching following users:", error));
+      }
     }
   }, [user]);
 
   const handleAddPost = async () => {
-   
-  
-  
     try {
-      
       const formData = new FormData();
-  
-      
       formData.append('tieuDe', newPostTitle);
       formData.append('thongTin', newPostContent);
       formData.append('nguoiDangBai', user.id); 
@@ -114,40 +120,29 @@ const Profile = ({ route, navigation }) => {
       formData.append('quan', selectedDistrict); 
       formData.append('phuong', selectedWard); 
 
-  
-     
-      // console.log("Form data bài đăng đã được tạo:", formData);
-  
-   
       const response = await axios.post("https://toquocbinh2102.pythonanywhere.com/baidangtimphongs/", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', 
+          'Content-Type': 'multipart/form-data',
         },
       });
-  
-      
+
       if (response.data) {
         alert("Bài đăng đã được tạo thành công!");
         setUserPosts((prevPosts) => [response.data, ...prevPosts]);
-    
+
         setNewPostTitle("");
         setNewPostContent("");
         setSelectedCity(null);
         setSelectedDistrict(null);
         setSelectedWard(null);
-      
       }
     } catch (error) {
       console.error("Lỗi khi đăng bài:", error);
       alert("Đã có lỗi xảy ra khi đăng bài. Vui lòng thử lại.");
     }
   };
-  
-  
 
-  const [visible, setVisible] = useState(false); 
-  const showMenu = () => setVisible(true); 
-  const hideMenu = () => setVisible(false); 
+  const toggleModal = () => setIsModalVisible(!isModalVisible); 
 
   return (
     <Provider>
@@ -166,14 +161,23 @@ const Profile = ({ route, navigation }) => {
                 <Text style={styles.profileUsername}>@{user.username}</Text>
               </View>
               <Menu
-                visible={visible}
-                onDismiss={hideMenu}
+                visible={visible} 
+                onDismiss={hideMenu} 
                 anchor={<IconButton icon="dots-vertical" size={24} onPress={showMenu} />}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               >
                 <Menu.Item onPress={logout} title="Đăng xuất" />
               </Menu>
+            </View>
+
+            <View style={styles.followingContainer}>
+              <Text style={styles.followingText}>
+                Đang theo dõi {followingUsers.length} người
+              </Text>
+              <TouchableOpacity onPress={toggleModal}>
+                <Text style={styles.viewAllText}>Xem tất cả</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.contactInfo}>
@@ -282,16 +286,64 @@ const Profile = ({ route, navigation }) => {
           <Text>Đang tải thông tin người dùng...</Text>
         )}
       </ScrollView>
+
+      <Modal
+  animationType="slide"
+  transparent={true}
+  visible={isModalVisible}
+  onRequestClose={toggleModal}
+>
+  <View style={styles.modalBackground}>
+    <View style={styles.modalContainer}>
+      <Text style={styles.modalTitle}>Danh sách người theo dõi</Text>
+      {followingUsers.length > 0 ? (
+        followingUsers.map((follower) => (
+          <TouchableOpacity
+            key={follower.id} 
+            style={styles.modalItem}
+            onPress={() => {
+              toggleModal(); 
+              navigation.navigate("TrangCaNhan", { userId: follower.id });
+            }}
+          >
+          
+            <View style={styles.followerInfoContainer}>
+            
+              <Image
+                source={follower.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${follower.image}` } : null}
+                style={styles.followerImage}
+              />
+
+        
+                <View style={styles.followerNameContainer}>
+                  <Text style={styles.followerName}>{follower.last_name} {follower.first_name}</Text>
+                  <Text style={styles.username}>@{follower.username}</Text>
+                </View>
+              </View>
+        
+          </TouchableOpacity>
+        ))
+      ) : (
+        <Text style={styles.modalItemText}>Không có người theo dõi.</Text>
+      )}
+      <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+        <Text style={styles.closeButtonText}>Đóng</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
+
     </Provider>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
     padding: 10,
   },
+
   profileHeader: {
     flexDirection: "row",
     marginBottom: 20,
@@ -325,6 +377,8 @@ const styles = StyleSheet.create({
     color: "#0288d1",
     marginTop: 5,
   },
+
+  // Contact Information Section
   contactInfo: {
     marginTop: 20,
     backgroundColor: "#f0f0f0",
@@ -346,9 +400,13 @@ const styles = StyleSheet.create({
     color: "#888",
     marginTop: 5,
   },
+
+ 
   manageTroContainer: {
     marginTop: 20,
   },
+
+
   postsTitle: {
     fontSize: 18,
     fontWeight: "bold",
@@ -405,6 +463,159 @@ const styles = StyleSheet.create({
     color: "#888",
     fontStyle: "italic",
     marginTop: 20,
+  },
+
+ 
+  followerInfoContainer: {
+    flexDirection: "row", 
+    alignItems: "center", 
+    marginBottom: 10, 
+  },
+  followerImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10, 
+  },
+  followingText: {
+    fontSize: 16,
+    color: "#0288d1",
+  },
+  followerNameContainer: {
+    flexDirection: "column", 
+  },
+  followerName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  username: {
+    color: "#0288d1",
+    fontStyle: "italic",
+  },
+
+ 
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalItem: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  modalItemText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: "#0288d1",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+
+
+  followerImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  followerNameContainer: {
+    flexDirection: "column", 
+  },
+  followerName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+ 
+
+ 
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  avatarContainer: {
+    marginRight: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarBorder: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 2,
+    borderColor: "#0288d1",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+
+  followerItem: {
+    flexDirection: "row", 
+    marginBottom: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  followerTextContainer: {
+    flexDirection: "column", 
+    justifyContent: "center",
+  },
+
+
+  postContainer: {
+    marginBottom: 20,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+
+ 
+  closeButton: {
+    backgroundColor: "#0288d1",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+
+
+  scrollViewContent: {
+    paddingBottom: 20,
+  },
+
+  
+  textBold: {
+    fontWeight: "bold",
+  },
+  textLink: {
+    color: "#0288d1",
   },
 });
 

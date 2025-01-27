@@ -10,10 +10,10 @@ const QuanLyTro = ({ navigation }) => {
 
   useEffect(() => {
     if (user && user.vaiTro === 2) {
-      console.log("user.id: ", user.id);  // Kiểm tra user.id
+      console.log("user.id: ", user.id);  
       axios.get(`https://toquocbinh2102.pythonanywhere.com/tros/?nguoiChoThue=${user.id}`)
         .then(response => {
-          console.log("Danh sách trọ: ", response.data);  // Kiểm tra dữ liệu trả về từ API
+          console.log("Danh sách trọ: ", response.data); 
           setTroList(response.data);
         })
         .catch(error => {
@@ -33,7 +33,13 @@ const QuanLyTro = ({ navigation }) => {
             style={styles.troItem}
             onPress={() => navigation.navigate("ChiTietTro", { troId: tro.id })}
           >
-            <Text style={styles.troTitle}>{tro.tenTro}</Text>
+            <View style={styles.troHeader}>
+              <Text style={styles.troTitle}>{tro.tenTro}</Text>
+           
+              <Text style={[styles.statusTag, tro.active ? styles.approved : styles.pending]}>
+                {tro.active ? "Đã duyệt" : "Đang chờ duyệt"}
+              </Text>
+            </View>
           </TouchableOpacity>
         ))
       ) : (
@@ -65,9 +71,28 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     borderRadius: 5,
   },
+  troHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   troTitle: {
     fontSize: 16,
     color: "#333",
+  },
+  statusTag: {
+    fontSize: 12,
+    fontWeight: "bold",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 5,
+    color: "#fff",
+  },
+  approved: {
+    backgroundColor: "#4CAF50", // Màu xanh lá
+  },
+  pending: {
+    backgroundColor: "#2196F3", // Màu xanh dương
   },
 });
 

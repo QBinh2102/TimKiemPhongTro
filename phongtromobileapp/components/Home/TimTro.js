@@ -85,7 +85,8 @@ const TimTro = ({ navigation }) => {
         return (
           (selectedCity ? tro.thanh_pho === selectedCity : true) &&
           (selectedDistrict ? tro.quan === selectedDistrict : true) &&
-          (selectedWard ? tro.phuong === selectedWard : true)
+          (selectedWard ? tro.phuong === selectedWard : true) && 
+          tro.active === true
         );
       });
   
