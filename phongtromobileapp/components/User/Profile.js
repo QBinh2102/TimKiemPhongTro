@@ -45,7 +45,7 @@ const Profile = ({ route, navigation }) => {
     return `${day}/${month}/${year}`;
   };
 
-  const showMenu = () => setVisible(true);  
+  const showMenu = () => setVisible(prev => !prev);  
   const hideMenu = () => setVisible(false); 
 
   useEffect(() => {
@@ -160,17 +160,17 @@ const Profile = ({ route, navigation }) => {
                 </Text>
                 <Text style={styles.profileUsername}>@{user.username}</Text>
               </View>
-              <Menu
-                visible={visible} 
-                onDismiss={hideMenu} 
-                anchor={<IconButton icon="dots-vertical" size={24} onPress={showMenu} />}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              >
-                <Menu.Item onPress={() => navigation.navigate('ThayDoiThongTin')} title="Thay đổi thông tin" />
-                <Menu.Item onPress={logout} title="Đăng xuất" />
-              
-              </Menu>
+             
+                <Menu
+                  visible={visible} 
+                  onDismiss={hideMenu} 
+                  anchor={<IconButton icon="dots-vertical" size={24} onPress={showMenu} />}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                >
+                  <Menu.Item onPress={() => navigation.navigate('ThayDoiThongTin')} title="Thay đổi thông tin" />
+                  <Menu.Item onPress={logout} title="Đăng xuất" />
+                </Menu>
             </View>
 
             <View style={styles.followingContainer}>
