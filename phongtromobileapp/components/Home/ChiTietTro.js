@@ -28,8 +28,6 @@ const ChiTietTro = ({ route, navigation }) => {
         setSelectedCity(response.data.thanh_pho);
         setSelectedDistrict(response.data.quan);
         setSelectedWard(response.data.phuong);
-        // console.log("userLogin.id: ", userLogin.id);
-        // console.log("tro.nguoiChoThue: ", tro.nguoiChoThue);
 
       })
       .catch(error => {
@@ -179,6 +177,7 @@ const ChiTietTro = ({ route, navigation }) => {
         ...prevState,
         active: true, 
       }));
+      navigation.goBack();
     })
     .catch((error) => {
       console.error("Lỗi khi duyệt trọ", error);
@@ -397,6 +396,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flex: 0.48,
     alignItems: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 20,
   },
   saveButton: {
     backgroundColor: "#0288d1",

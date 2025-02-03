@@ -192,8 +192,19 @@ const Profile = ({ route, navigation }) => {
 
             {user.vaiTro === 1 && (
               <View style={styles.manageTroContainer}>
-                <Button mode="contained" onPress={() => navigation.navigate('KiemDuyetTro')}>
+                <Button 
+                  mode="contained" 
+                  onPress={() => navigation.navigate('KiemDuyetTro')}
+                  style={styles.manageButton}
+                >
                   Kiểm duyệt trọ
+                </Button>
+                <Button 
+                  mode="contained" 
+                  onPress={() => navigation.navigate('Users')}
+                  style={styles.manageButton}
+                >
+                  Quản lý user
                 </Button>
               </View>
             )}
@@ -265,77 +276,77 @@ const Profile = ({ route, navigation }) => {
               </View>
             )}
 
+          {user.vaiTro !== 1 && (
             <Text style={styles.postsTitle}>Bài viết của {user.first_name}:</Text>
-            {userPosts.length > 0 ? (
-              userPosts.slice().reverse().map((post) => (
-                <TouchableOpacity
-                  key={post.id}
-                  style={styles.postItem}
-                  onPress={() => navigation.navigate('ChiTietBaiDang', { baiDang: post })}
-                >
-                  <Text style={styles.postTitle}>{post.tieuDe}</Text>
-                  <Text style={styles.postDate}>
-                    Ngày đăng: {new Date(post.created_date).toLocaleString("vi-VN")}
-                  </Text>
-                  <Text style={styles.postInfo}>{post.thongTin.replace(/<[^>]+>/g, '')}</Text>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <Text style={styles.noPostsText}>Người dùng này chưa đăng bài viết nào.</Text>
-            )}
-          </>
-        ) : (
-          <Text>Đang tải thông tin người dùng...</Text>
-        )}
+          )}
+          {user.vaiTro !== 1 && userPosts.length > 0 ? (
+            userPosts.slice().reverse().map((post) => (
+              <TouchableOpacity
+                key={post.id}
+                style={styles.postItem}
+                onPress={() => navigation.navigate('ChiTietBaiDang', { baiDang: post })}
+              >
+                <Text style={styles.postTitle}>{post.tieuDe}</Text>
+                <Text style={styles.postDate}>
+                  Ngày đăng: {new Date(post.created_date).toLocaleString("vi-VN")}
+                </Text>
+                <Text style={styles.postInfo}>{post.thongTin.replace(/<[^>]+>/g, '')}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            user.vaiTro !== 1 && <Text style={styles.noPostsText}>Người dùng này chưa đăng bài viết nào.</Text>
+          )}
+        </>
+      ) : (
+        <Text>Đang tải thông tin người dùng...</Text>
+      )}
       </ScrollView>
 
       <Modal
-  animationType="slide"
-  transparent={true}
-  visible={isModalVisible}
-  onRequestClose={toggleModal}
->
-  <View style={styles.modalBackground}>
-    <View style={styles.modalContainer}>
-      <Text style={styles.modalTitle}>Danh sách người theo dõi</Text>
-      {followingUsers.length > 0 ? (
-        followingUsers.map((follower) => (
-          <TouchableOpacity
-            key={follower.id} 
-            style={styles.modalItem}
-            onPress={() => {
-              toggleModal(); 
-              navigation.navigate("TrangCaNhan", { userId: follower.id });
-            }}
-          >
-          
-            <View style={styles.followerInfoContainer}>
-            
-              <Image
-                source={follower.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${follower.image}` } : null}
-                style={styles.followerImage}
-              />
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Danh sách người theo dõi</Text>
+            {followingUsers.length > 0 ? (
+              followingUsers.map((follower) => (
+                <TouchableOpacity
+                  key={follower.id} 
+                  style={styles.modalItem}
+                  onPress={() => {
+                    toggleModal(); 
+                    navigation.navigate("TrangCaNhan", { userId: follower.id });
+                  }}
+                >
+                
+                  <View style={styles.followerInfoContainer}>
+                  
+                    <Image
+                      source={follower.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${follower.image}` } : null}
+                      style={styles.followerImage}
+                    />
 
-        
-                <View style={styles.followerNameContainer}>
-                  <Text style={styles.followerName}>{follower.last_name} {follower.first_name}</Text>
-                  <Text style={styles.username}>@{follower.username}</Text>
-                </View>
-              </View>
-        
-          </TouchableOpacity>
-        ))
-      ) : (
-        <Text style={styles.modalItemText}>Không có người theo dõi.</Text>
-      )}
-      <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-        <Text style={styles.closeButtonText}>Đóng</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
-
-
+              
+                      <View style={styles.followerNameContainer}>
+                        <Text style={styles.followerName}>{follower.last_name} {follower.first_name}</Text>
+                        <Text style={styles.username}>@{follower.username}</Text>
+                      </View>
+                    </View>
+              
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={styles.modalItemText}>Không có người theo dõi.</Text>
+            )}
+            <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>Đóng</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </Provider>
   );
 };
@@ -402,13 +413,23 @@ const styles = StyleSheet.create({
     color: "#888",
     marginTop: 5,
   },
-
- 
+  manageContainer: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  manageButton: {
+    marginBottom: 10, 
+  },
   manageTroContainer: {
     marginTop: 20,
   },
-
-
   postsTitle: {
     fontSize: 18,
     fontWeight: "bold",

@@ -1,33 +1,46 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from "react-native";
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 
 const KiemDuyetTro = ({ navigation }) => {
   const [tros, setTros] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filteredTros, setFilteredTros] = useState([]);  // State để chứa danh sách đã lọc
-  const [filtering, setFiltering] = useState(false);  // Trạng thái lọc
+  const [filteredTros, setFilteredTros] = useState([]);
+  const [filtering, setFiltering] = useState(false);
 
-  useEffect(() => {
+  // Hàm lấy danh sách trọ
+  const fetchTros = () => {
     axios.get("https://toquocbinh2102.pythonanywhere.com/tros/")
       .then((response) => {
         setTros(response.data);
-        setFilteredTros(response.data);  // Khởi tạo danh sách ban đầu là không lọc
+        setFilteredTros(response.data);  // Cập nhật lại danh sách trọ khi có dữ liệu mới
         setLoading(false);
       })
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu trọ:", error);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchTros(); // Lần đầu tải dữ liệu trọ
   }, []);
+
+  // Sử dụng useFocusEffect để reload dữ liệu khi quay lại trang này
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchTros(); // Gọi lại hàm tải lại dữ liệu trọ mỗi khi quay lại trang này
+    }, [])
+  );
 
   const handleFilter = () => {
     if (filtering) {
-      setFilteredTros(tros);  // Nếu đang lọc, reset lại toàn bộ trọ
+      setFilteredTros(tros); // Nếu đang lọc, reset lại toàn bộ trọ
     } else {
-      setFilteredTros(tros.filter(item => !item.active));  // Lọc trọ đang chờ duyệt
+      setFilteredTros(tros.filter(item => !item.active)); // Lọc trọ đang chờ duyệt
     }
-    setFiltering(!filtering);  // Đổi trạng thái lọc
+    setFiltering(!filtering); // Đổi trạng thái lọc
   };
 
   const renderItem = ({ item }) => (
@@ -56,24 +69,22 @@ const KiemDuyetTro = ({ navigation }) => {
     );
   }
 
-  if (filteredTros.length === 0) {
-    return (
-      <View style={styles.container}>
-        <Text>Không có trọ nào.</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       {/* Nút lọc */}
       <Button title={filtering ? "Hiển thị tất cả" : "Hiển thị trọ đang chờ duyệt"} onPress={handleFilter} />
 
-      <FlatList
-        data={filteredTros}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-      />
+      {filteredTros.length === 0 ? (
+        <View style={styles.container}>
+          <Text>Không có trọ nào.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredTros}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+        />
+      )}
     </View>
   );
 };

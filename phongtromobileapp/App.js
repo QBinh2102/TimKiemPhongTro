@@ -32,6 +32,8 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth'; // Authentication
 import { getDatabase } from 'firebase/database'; // Realtime Database
 import { getAnalytics } from 'firebase/analytics';
+import ChatRoom from './components/Home/ChatRoom';
+import Chat from './components/Home/Chat';
 
 // Cấu hình Firebase
 const firebaseConfig = {
@@ -103,6 +105,11 @@ const HomeStackNavigator = () => {
         options={{ title: "Tìm trọ" }}
       />
       <Stack.Screen
+        name="ChatRoom"
+        component={ChatRoom}
+        options={{title: "Tin nhắn"}}
+      />
+      <Stack.Screen
         name="KiemDuyetTro"
         component={KiemDuyetTro}
         options={{ title: "Kiểm duyệt trọ" }}
@@ -111,6 +118,28 @@ const HomeStackNavigator = () => {
     </Stack.Navigator>
   );
 };
+
+const ChatStackNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Chat"
+        component={Chat}
+        options={{title: "Tin nhắn"}}
+      />
+      <Stack.Screen
+        name="ChatRoom"
+        component={ChatRoom}
+        options={{title: "Tin nhắn"}}
+      />
+      <Stack.Screen
+        name="TrangCaNhan"
+        component={TrangCaNhan}
+        options={{ title: "Trang cá nhân" }}
+      />
+    </Stack.Navigator>
+  )
+}
 
 const ProfileStackNavigator = () => {
   return (
@@ -211,6 +240,18 @@ const TabNavigator = ({ navigation }) => {
               title: "Trang chủ",
               headerShown: false,
               tabBarIcon: () => <Icon source="home-account" size={20} />,
+              listeners: {
+                tabPress: (e) => resetStackOnTabPress(navigation, e),
+              },
+            }}
+          />
+          <Tab.Screen
+            name="Chat"
+            component={ChatStackNavigator}
+            options={{
+              title: "Tin nhắn",
+              headerShown: false,
+              tabBarIcon: () => <Icon source="account-check" size={20} />,
               listeners: {
                 tabPress: (e) => resetStackOnTabPress(navigation, e),
               },
