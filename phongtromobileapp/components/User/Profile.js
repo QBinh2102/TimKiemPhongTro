@@ -19,9 +19,11 @@ const Profile = ({ route, navigation }) => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
   const [followingUsers, setFollowingUsers] = useState([]);
+  const [followersUsers, setFollowUsers] = useState([]);
   const dispatch = useContext(MyDispatchContext);
   const [isModalVisible, setIsModalVisible] = useState(false); 
-  const [visible, setVisible] = useState(false); // Quản lý trạng thái menu (nút 3 chấm)
+  const [visible, setVisible] = useState(false); 
+  const [activeTab, setActiveTab] = useState('followers');
 
   const logout = async () => {
     await AsyncStorage.removeItem("token");
@@ -110,6 +112,27 @@ const Profile = ({ route, navigation }) => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user) {
+
+      axios.get("https://toquocbinh2102.pythonanywhere.com/users")
+        .then((response) => {
+          const allUsers = response.data;
+  
+          const followers = allUsers.filter((userItem) =>
+            userItem.tuongTac && userItem.tuongTac.includes(user.id)
+          );
+  
+          setFollowUsers(followers);
+        })
+        .catch((error) => console.error("Error fetching followers:", error));
+    }
+  }, [user]);
+  
+
+
+  
+
   const handleAddPost = async () => {
     try {
       const formData = new FormData();
@@ -172,12 +195,14 @@ const Profile = ({ route, navigation }) => {
                   <Menu.Item onPress={logout} title="Đăng xuất" />
                 </Menu>
             </View>
-
             <View style={styles.followingContainer}>
               <Text style={styles.followingText}>
-                Đang theo dõi {followingUsers.length} người
+                Có <Text style={{ fontWeight: 'bold', color: 'red' }}>{followersUsers.length}</Text> người theo dõi
               </Text>
-              <TouchableOpacity onPress={toggleModal}>
+              <Text style={[styles.followingText]}>
+                Đang theo dõi <Text style={{ fontWeight: 'bold', color: 'red' }}>{followingUsers.length}</Text> người
+              </Text>
+              <TouchableOpacity onPress={toggleModal} style={styles.viewAllButton}>
                 <Text style={styles.viewAllText}>Xem tất cả</Text>
               </TouchableOpacity>
             </View>
@@ -218,7 +243,7 @@ const Profile = ({ route, navigation }) => {
             )}
             {user.vaiTro === 3 && (
               <View style={styles.addPostForm}>
-                {/* Dropdown for City */}
+        
                 <View style={styles.input}>
                   <Text>Chọn Tỉnh/Thành phố:</Text>
                   <Picker
@@ -231,7 +256,7 @@ const Profile = ({ route, navigation }) => {
                   </Picker>
                 </View>
 
-                {/* Dropdown for District */}
+          
                 <View style={styles.input}>
                   <Text>Chọn Quận/Huyện:</Text>
                   <Picker
@@ -245,7 +270,6 @@ const Profile = ({ route, navigation }) => {
                   </Picker>
                 </View>
 
-                {/* Dropdown for Ward */}
                 <View style={styles.input}>
                   <Text>Chọn Xã/Phường/Thị trấn:</Text>
                   <Picker
@@ -310,43 +334,98 @@ const Profile = ({ route, navigation }) => {
       >
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Danh sách người theo dõi</Text>
-            {followingUsers.length > 0 ? (
-              followingUsers.map((follower) => (
-                <TouchableOpacity
-                  key={follower.id} 
-                  style={styles.modalItem}
-                  onPress={() => {
-                    toggleModal(); 
-                    navigation.navigate("TrangCaNhan", { userId: follower.id });
-                  }}
-                >
-                
-                  <View style={styles.followerInfoContainer}>
-                  
-                    <Image
-                      source={follower.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${follower.image}` } : null}
-                      style={styles.followerImage}
-                    />
+            <Text style={styles.modalTitle}>Danh sách tương tác</Text>
 
-              
-                      <View style={styles.followerNameContainer}>
-                        <Text style={styles.followerName}>{follower.last_name} {follower.first_name}</Text>
-                        <Text style={styles.username}>@{follower.username}</Text>
+     
+            <View style={styles.tabsContainer}>
+              <TouchableOpacity
+                style={[styles.tabButton, activeTab === 'followers' && styles.activeTab]}
+                onPress={() => setActiveTab('followers')}
+              >
+                <Text style={styles.tabText}>Người theo dõi</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.tabButton, activeTab === 'following' && styles.activeTab]}
+                onPress={() => setActiveTab('following')}
+              >
+                <Text style={styles.tabText}>Đang theo dõi</Text>
+              </TouchableOpacity>
+            </View>
+
+   
+            {activeTab === 'followers' ? (
+              <>
+                
+                {followersUsers.length > 0 ? (
+                  followersUsers.map((follower) => (
+                    <TouchableOpacity
+                      key={follower.id}
+                      style={styles.modalItem}
+                      onPress={() => {
+                        toggleModal();
+                        navigation.navigate("TrangCaNhan", { userId: follower.id });
+                      }}
+                    >
+                      <View style={styles.followerInfoContainer}>
+                        <Image
+                          source={follower.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${follower.image}` } : null}
+                          style={styles.followerImage}
+                        />
+                        <View style={styles.followerNameContainer}>
+                          <Text style={styles.followerName}>
+                            {follower.last_name} {follower.first_name}
+                          </Text>
+                          <Text style={styles.username}>@{follower.username}</Text>
+                        </View>
                       </View>
-                    </View>
-              
-                </TouchableOpacity>
-              ))
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <Text style={styles.modalItemText}>Không có người theo dõi.</Text>
+                )}
+              </>
             ) : (
-              <Text style={styles.modalItemText}>Không có người theo dõi.</Text>
+              <>
+               
+                {followingUsers.length > 0 ? (
+                  followingUsers.map((follower) => (
+                    <TouchableOpacity
+                      key={follower.id}
+                      style={styles.modalItem}
+                      onPress={() => {
+                        toggleModal();
+                        navigation.navigate("TrangCaNhan", { userId: follower.id });
+                      }}
+                    >
+                      <View style={styles.followerInfoContainer}>
+                        <Image
+                          source={follower.image ? { uri: `https://toquocbinh2102.pythonanywhere.com${follower.image}` } : null}
+                          style={styles.followerImage}
+                        />
+                        <View style={styles.followerNameContainer}>
+                          <Text style={styles.followerName}>
+                            {follower.last_name} {follower.first_name}
+                          </Text>
+                          <Text style={styles.username}>@{follower.username}</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <Text style={styles.modalItemText}>Bạn chưa theo dõi ai.</Text>
+                )}
+              </>
             )}
+
+       
             <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
               <Text style={styles.closeButtonText}>Đóng</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+
+
     </Provider>
   );
 };
@@ -536,10 +615,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
+  // modalItem: {
+  //   paddingVertical: 10,
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: "#ddd",
+  // },
   modalItem: {
+    flexDirection: 'row',
     paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
   },
   modalItemText: {
     fontSize: 16,
@@ -639,6 +722,22 @@ const styles = StyleSheet.create({
   },
   textLink: {
     color: "#0288d1",
+  }, tabsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 15,
+  },
+  tabButton: {
+    padding: 10,
+    backgroundColor: '#ddd',
+    borderRadius: 5,
+  },
+  activeTab: {
+    backgroundColor: 'red',
+  },
+  tabText: {
+    fontSize: 16,
+    color: 'white',
   },
 });
 

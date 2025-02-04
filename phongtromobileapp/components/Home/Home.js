@@ -82,7 +82,12 @@ const Home = () => {
           title="Tìm Trọ" 
           color="#0288d1"  
         />
-        <Text style={styles.title}>Bài đăng</Text>
+        {/* <Button
+          onPress={() => navigation.navigate("TimBaiDang")}  
+          title="Tìm bài đăng" 
+          color="#0288d1"  
+        /> */}
+        <Text style={styles.title}>Trang chủ</Text>
         <Ionicons
           name="search"
           size={30}
