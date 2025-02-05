@@ -12,6 +12,8 @@ const TimTro = ({ navigation }) => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedWard, setSelectedWard] = useState(null);
+  const [selectedPrice, setSelectedPrice] = useState(null);
+  const [selectedPeople, setSelectedPeople] = useState(null);
   const [troList, setTroList] = useState([]);
 
   useEffect(() => {
@@ -28,7 +30,6 @@ const TimTro = ({ navigation }) => {
 
   useEffect(() => {
     if (selectedCity) {
-      // console.log("Mã tỉnh thành: ", selectedCity); 
       const fetchDistricts = async () => {
         try {
           const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/city/${selectedCity}`);
@@ -40,13 +41,12 @@ const TimTro = ({ navigation }) => {
       };
       fetchDistricts();
     } else {
-      setDistricts([]); // Reset districts if no city is selected
+      setDistricts([]);
     }
   }, [selectedCity]);
 
   useEffect(() => {
     if (selectedDistrict) {
-      // console.log("Mã quận huyện: ", selectedDistrict); 
       const fetchWards = async () => {
         try {
           const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/api/address/district/${selectedDistrict}`);
@@ -58,38 +58,34 @@ const TimTro = ({ navigation }) => {
       };
       fetchWards();
     } else {
-      setWards([]); // Reset wards if no district is selected
+      setWards([]);
     }
   }, [selectedDistrict]);
-
-  useEffect(() => {
-    if (selectedWard) {
-      // console.log("Mã xã phường: ", selectedWard); 
-    }
-  }, [selectedWard]);
 
   const handleSearch = async () => {
     let url = "https://toquocbinh2102.pythonanywhere.com/tros/";
     const params = {};
-  
+
     if (selectedCity) params.thanh_pho = selectedCity;
     if (selectedDistrict) params.quan = selectedDistrict;
     if (selectedWard) params.phuong = selectedWard;
-  
+    if (selectedPrice) params.gia = selectedPrice;
+    if (selectedPeople) params.soNguoiO = selectedPeople;
+
     try {
       const response = await axios.get(url, { params });
-      // console.log("API response: ", response.data);
-  
-     
+
       const filteredTroList = response.data.filter(tro => {
         return (
           (selectedCity ? tro.thanh_pho === selectedCity : true) &&
           (selectedDistrict ? tro.quan === selectedDistrict : true) &&
-          (selectedWard ? tro.phuong === selectedWard : true) && 
+          (selectedWard ? tro.phuong === selectedWard : true) &&
+          (selectedPrice ? filterByPrice(tro.gia, selectedPrice) : true) &&
+          (selectedPeople ? filterByPeople(tro.soNguoiO, selectedPeople) : true) &&
           tro.active === true
         );
       });
-  
+
       if (filteredTroList.length > 0) {
         setTroList(filteredTroList);
       } else {
@@ -100,10 +96,41 @@ const TimTro = ({ navigation }) => {
       setTroList([]);
     }
   };
-  
+
+  const filterByPrice = (price, filter) => {
+    switch (filter) {
+      case "under_1M":
+        return price < 1000000;
+      case "1M_2M":
+        return price >= 1000000 && price <= 2000000;
+      case "2M_3M":
+        return price > 2000000 && price <= 3000000;
+      case "3M_5M":
+        return price > 3000000 && price <= 5000000;
+      case "over_5M":
+        return price > 5000000;
+      default:
+        return true;
+    }
+  };
+
+  const filterByPeople = (people, filter) => {
+    switch (filter) {
+      case "1":
+        return people === 1;
+      case "2":
+        return people === 2;
+      case "3":
+        return people === 3;
+      case "4plus":
+        return people >= 4;
+      default:
+        return true;
+    }
+  };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Tìm Trọ</Text>
 
       <Text style={styles.label}>Chọn Tỉnh / Thành phố</Text>
@@ -142,6 +169,33 @@ const TimTro = ({ navigation }) => {
         ))}
       </Picker>
 
+      <Text style={styles.label}>Chọn Giá Tiền</Text>
+      <Picker
+        selectedValue={selectedPrice}
+        style={styles.picker}
+        onValueChange={(itemValue) => setSelectedPrice(itemValue)}
+      >
+        <Picker.Item label="Tất cả" value={null} />
+        <Picker.Item label="Dưới 1 triệu" value="under_1M" />
+        <Picker.Item label="Từ 1 triệu đến 2 triệu" value="1M_2M" />
+        <Picker.Item label="Từ 2 triệu đến 3 triệu" value="2M_3M" />
+        <Picker.Item label="Từ 3 triệu đến 5 triệu" value="3M_5M" />
+        <Picker.Item label="Trên 5 triệu" value="over_5M" />
+      </Picker>
+
+      <Text style={styles.label}>Chọn Số Người Ở</Text>
+      <Picker
+        selectedValue={selectedPeople}
+        style={styles.picker}
+        onValueChange={(itemValue) => setSelectedPeople(itemValue)}
+      >
+        <Picker.Item label="Tất cả" value={null} />
+        <Picker.Item label="1 người" value="1" />
+        <Picker.Item label="2 người" value="2" />
+        <Picker.Item label="3 người" value="3" />
+        <Picker.Item label="Từ 4 người trở lên" value="4plus" />
+      </Picker>
+
       <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
         <Text style={styles.searchButtonText}>Tìm Trọ</Text>
       </TouchableOpacity>
@@ -164,7 +218,7 @@ const TimTro = ({ navigation }) => {
           <Text style={styles.noResultsText}>Không có kết quả tìm kiếm</Text>
         )}
       </ScrollView>
-    </View>
+    </ScrollView>
   );
 };
 
