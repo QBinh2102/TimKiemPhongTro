@@ -128,8 +128,7 @@ const Register = () => {
                     }
                 });
                 console.info(res.data)
-                Alert.alert("Đăng ký thành công, mời bạn đăng nhập")
-                nav.navigate("Login");
+                
             } catch (ex) {
                 // console.error("Lỗi trong quá trình gửi yêu cầu: ", ex);
                 // // Kiểm tra thông tin lỗi chi tiết
@@ -140,6 +139,8 @@ const Register = () => {
                 // }
             } finally {
                 setLoading(false);
+                Alert.alert("Đăng ký thành công, mời bạn đăng nhập")
+                nav.navigate("Login");
             }
         }
     };

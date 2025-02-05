@@ -156,6 +156,7 @@ const ChiTietTro = ({ route, navigation }) => {
     })
       .then(() => {
         alert("Quảng cáo trọ thành công!");
+
         setAdvertiseModalVisible(false);
         setAdvertiseTitle('');
         setAdvertiseContent('');

@@ -10,11 +10,12 @@ const QuanLyTro = ({ navigation }) => {
 
   useEffect(() => {
     if (user && user.vaiTro === 2) {
-      console.log("user.id: ", user.id);  
-      axios.get(`https://toquocbinh2102.pythonanywhere.com/tros/?nguoiChoThue=${user.id}`)
+      console.log("user.id: ", user.id);
+      axios.get("https://toquocbinh2102.pythonanywhere.com/tros")
         .then(response => {
-          console.log("Danh sách trọ: ", response.data); 
-          setTroList(response.data);
+          console.log("Danh sách trọ: ", response.data);
+          const filteredTroList = response.data.filter(tro => tro.nguoiChoThue === user.id);
+          setTroList(filteredTroList);
         })
         .catch(error => {
           console.error("Lỗi khi tải danh sách trọ", error);

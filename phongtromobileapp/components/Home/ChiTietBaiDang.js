@@ -5,6 +5,7 @@ import { Subheading } from "react-native-paper";
 import Modal from "react-native-modal";  // Import modal từ react-native-modal
 import { MyUserContext } from "../../configs/MyUserContext";
 import axios from 'axios';
+import { useFocusEffect } from "@react-navigation/native";
 
 const ChiTietBaiDang = ({ route, navigation }) => {
   const userLogin = useContext(MyUserContext);

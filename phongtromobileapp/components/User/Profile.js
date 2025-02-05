@@ -6,6 +6,7 @@ import { Button, IconButton, Menu, Provider } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
+import { useFocusEffect } from "@react-navigation/native";
 
 const Profile = ({ route, navigation }) => {
   const user = useContext(MyUserContext);
@@ -90,7 +91,9 @@ const Profile = ({ route, navigation }) => {
     }
   }, [selectedDistrict]);
 
-  useEffect(() => {
+  
+
+  const loadUserPosts = async () => {
     if (user) {
       fetch("https://toquocbinh2102.pythonanywhere.com/baidangs/")
         .then((response) => response.json())
@@ -100,38 +103,82 @@ const Profile = ({ route, navigation }) => {
           setUserPosts(sortedPosts);
         })
         .catch((error) => console.error("Error fetching user posts:", error));
+    }
+  };
 
-      if (user.tuongTac) {
-        Promise.all(user.tuongTac.map(async (id) => {
-          const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/users/${id}`);
-          return response.data;
-        }))
-        .then(data => setFollowingUsers(data))
-        .catch((error) => console.error("Error fetching following users:", error));
+  const loadTuongTac = async () => {
+    if (user) {
+      try {
+        // Lấy tất cả người dùng
+        const response = await axios.get("https://toquocbinh2102.pythonanywhere.com/users");
+        const allUsers = response.data;
+  
+        // Lọc danh sách followers
+        const followers = allUsers.filter(userItem =>
+          userItem.tuongTac && userItem.tuongTac.includes(user.id)
+        );
+        setFollowUsers(followers);
+  
+        // Lấy dữ liệu người đang theo dõi (following)
+        if (user.tuongTac) {
+          const followingData = await Promise.all(user.tuongTac.map(async (id) => {
+            const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/users/${id}`);
+            return response.data;
+          }));
+          setFollowingUsers(followingData);
+        }
+      } catch (error) {
+        console.error("Error fetching followers:", error);
       }
     }
-  }, [user]);
+  };
 
-  useEffect(() => {
-    if (user) {
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log(user);
+      loadUserPosts();  // Tải lại danh sách bài đăng mỗi khi trang được focus
+      loadTuongTac();
+    }, [user])  // Thêm userLogin vào dependencies để reload khi userLogin thay đổi
+  );
 
-      axios.get("https://toquocbinh2102.pythonanywhere.com/users")
-        .then((response) => {
-          const allUsers = response.data;
-  
-          const followers = allUsers.filter((userItem) =>
-            userItem.tuongTac && userItem.tuongTac.includes(user.id)
-          );
-  
-          setFollowUsers(followers);
-        })
-        .catch((error) => console.error("Error fetching followers:", error));
-    }
-  }, [user]);
-  
+  // useEffect(() => {
+  //   if (user) {
+  //     // fetch("https://toquocbinh2102.pythonanywhere.com/baidangs/")
+  //     //   .then((response) => response.json())
+  //     //   .then((data) => {
+  //     //     const filteredPosts = data.filter(post => post.nguoiDangBai === user.id);
+  //     //     const sortedPosts = filteredPosts.sort((b, a) => new Date(b.created_date) - new Date(a.created_date));
+  //     //     setUserPosts(sortedPosts);
+  //     //   })
+  //     //   .catch((error) => console.error("Error fetching user posts:", error));
 
+  //     if (user.tuongTac) {
+  //       Promise.all(user.tuongTac.map(async (id) => {
+  //         const response = await axios.get(`https://toquocbinh2102.pythonanywhere.com/users/${id}`);
+  //         return response.data;
+  //       }))
+  //       .then(data => setFollowingUsers(data))
+  //       .catch((error) => console.error("Error fetching following users:", error));
+  //     }
+  //   }
+  // }, [user]);
 
+  // useEffect(() => {
+  //   if (user) {
+
+  //     axios.get("https://toquocbinh2102.pythonanywhere.com/users")
+  //       .then((response) => {
+  //         const allUsers = response.data;
   
+  //         const followers = allUsers.filter((userItem) =>
+  //           userItem.tuongTac && userItem.tuongTac.includes(user.id)
+  //         );
+  
+  //         setFollowUsers(followers);
+  //       })
+  //       .catch((error) => console.error("Error fetching followers:", error));
+  //   }
+  // }, [user]);
 
   const handleAddPost = async () => {
     try {
@@ -195,7 +242,7 @@ const Profile = ({ route, navigation }) => {
                   <Menu.Item onPress={logout} title="Đăng xuất" />
                 </Menu>
             </View>
-            <View style={styles.followingContainer}>
+            <View>
               <Text style={styles.followingText}>
                 Có <Text style={{ fontWeight: 'bold', color: 'red' }}>{followersUsers.length}</Text> người theo dõi
               </Text>
@@ -223,13 +270,6 @@ const Profile = ({ route, navigation }) => {
                   style={styles.manageButton}
                 >
                   Kiểm duyệt trọ
-                </Button>
-                <Button 
-                  mode="contained" 
-                  onPress={() => navigation.navigate('Users')}
-                  style={styles.manageButton}
-                >
-                  Quản lý user
                 </Button>
               </View>
             )}

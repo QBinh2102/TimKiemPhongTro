@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, Button, ScrollView, Alert } from "react-native";
 import { Avatar, ListItem } from "react-native-elements";
 import { Title, Subheading } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Ionicons } from 'react-native-vector-icons';  
 import APIs, { endpoints } from "../../configs/APIs";
 
 import { getDatabase, ref, set } from "firebase/database";
+import { MyUserContext } from "../../configs/MyUserContext";
 
 const Home = () => {
+  const user = useContext(MyUserContext);
   const [baidangs, setBaidangs] = useState([]);
   const [filteredBaidangs, setFilteredBaidangs] = useState([]);
   const [filterType, setFilterType] = useState('');
@@ -35,6 +37,12 @@ const Home = () => {
       console.error("Error loading posts:", error);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadBaidangs();  // Tải lại danh sách bài đăng mỗi khi trang được focus
+    }, [user])  // Thêm userLogin vào dependencies để reload khi userLogin thay đổi
+  );
 
   useEffect(() => {
     loadBaidangs();

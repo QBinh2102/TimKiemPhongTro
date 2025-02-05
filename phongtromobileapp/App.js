@@ -189,7 +189,11 @@ const ProfileStackNavigator = () => {
         component={ThayDoiThongTin}
         options={{ title: "ThayDoiThongTin" }}
       />
-
+      <Stack.Screen
+        name="ChatRoom"
+        component={ChatRoom}
+        options={{title: "Tin nhắn"}}
+      />
     </Stack.Navigator>
   );
 };
