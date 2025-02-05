@@ -20,6 +20,7 @@ const ChiTietTro = ({ route, navigation }) => {
   const [advertiseTitle, setAdvertiseTitle] = useState('');
   const [advertiseContent, setAdvertiseContent] = useState('');
 
+  const [owner, setOwner] = useState(null);
  
   useEffect(() => {
     axios.get(`https://toquocbinh2102.pythonanywhere.com/tros/${troId}/`)
@@ -93,6 +94,19 @@ const ChiTietTro = ({ route, navigation }) => {
     };
     fetchImages();
   }, [troId]);
+
+  useEffect(() => {
+    if (tro && tro.nguoiChoThue) {
+      axios.get(`https://toquocbinh2102.pythonanywhere.com/users/${tro.nguoiChoThue}/`)
+        .then(response => {
+          setOwner(response.data);
+        })
+        .catch(error => {
+          console.error("Lỗi khi lấy thông tin người cho thuê", error);
+          alert("Đã có lỗi xảy ra khi lấy thông tin người cho thuê.");
+        });
+    }
+  }, [tro]);
 
   // Xóa trọ
   const handleDelete = () => {
@@ -199,6 +213,24 @@ const ChiTietTro = ({ route, navigation }) => {
       
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Chi Tiết Trọ</Text>
+
+        <Text style={styles.label}>Người Cho Thuê:</Text>
+          {owner ? (
+            <TouchableOpacity 
+            onPress={() => {
+              // console.log(owner.id);  
+              navigation.navigate("TrangCaNhan", { userId: owner.id });
+
+            }}
+          >
+            <Text style={styles.ownerName}>{owner.username}</Text>
+          </TouchableOpacity>
+          
+          
+          ) : (
+            <Text style={styles.info}>Đang tải thông tin người cho thuê...</Text>
+          )}
+
 
         <Text style={styles.label}>Tên Trọ:</Text>
         <Text style={styles.info}>{tro.tenTro}</Text>
@@ -470,7 +502,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: 10,
     alignItems: "center",
-  },
+  },ownerName: {
+    fontSize: 16,
+    color: "#0288d1",
+    textDecorationLine: "underline",
+    fontWeight: "bold",
+  }
+  
 });
 
 export default ChiTietTro;

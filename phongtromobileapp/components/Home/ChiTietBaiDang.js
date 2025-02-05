@@ -176,7 +176,7 @@ const ChiTietBaiDang = ({ route, navigation }) => {
         { 
           text: "Xóa", 
           onPress: () => {
-            fetch(`https://toquocbinh2102.pythonanywhere.com/baidangchothues/${baiDang.id}/`, {
+            fetch(`https://toquocbinh2102.pythonanywhere.com/baidangs/${baiDang.id}/`, {
               method: "DELETE",
             })
               .then(() => {
