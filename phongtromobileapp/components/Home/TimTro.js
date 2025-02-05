@@ -177,9 +177,9 @@ const TimTro = ({ navigation }) => {
       >
         <Picker.Item label="Tất cả" value={null} />
         <Picker.Item label="Dưới 1 triệu" value="under_1M" />
-        <Picker.Item label="Từ 1 triệu đến 2 triệu" value="1M_2M" />
-        <Picker.Item label="Từ 2 triệu đến 3 triệu" value="2M_3M" />
-        <Picker.Item label="Từ 3 triệu đến 5 triệu" value="3M_5M" />
+        <Picker.Item label="Trên 1 triệu đến 2 triệu" value="1M_2M" />
+        <Picker.Item label="Trên 2 triệu đến 3 triệu" value="2M_3M" />
+        <Picker.Item label="Trên 3 triệu đến 5 triệu" value="3M_5M" />
         <Picker.Item label="Trên 5 triệu" value="over_5M" />
       </Picker>
 
